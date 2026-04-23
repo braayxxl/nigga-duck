@@ -434,15 +434,26 @@ let CELL;
 let W, H;
 
 // =============================================
+// CAMERA
+// =============================================
+let camRow = ROWS - 1;
+let camRowTarget = ROWS - 1;
+const CAM_VISIBLE_ROWS = 9;
+
+function updateCamera() {
+  camRowTarget = duck.row + 1.5;
+  camRow += (camRowTarget - camRow) * 0.12;
+}
+
+// =============================================
 // ISOMETRIC HELPERS
 // =============================================
-// Convert grid (col, row) to isometric screen (x, y)
-// Origin is top-center of the canvas
 function toIso(col, row) {
   const tileW = CELL * 1.5;
   const tileH = CELL * 0.75;
-  const x = (col - row) * (tileW / 2) + W / 2;
-  const y = (col + row) * (tileH / 2) + CELL * 1.5;
+  const relRow = row - camRow;
+  const x = (col - relRow) * (tileW / 2) + W / 2;
+  const y = (col + relRow) * (tileH / 2) + H / 2;
   return { x, y };
 }
 
@@ -501,17 +512,13 @@ function isoSideRight(cx, cy, height, fillStyle) {
 }
 
 function resize() {
-  // Iso canvas needs to be wider+taller than flat grid
-  const isoW = (COLS + ROWS) * 30 + 60;
-  const isoH = (COLS + ROWS) * 16 + 120;
-  const maxW = window.innerWidth - 16;
-  const maxH = window.innerHeight - 80;
-  // Find CELL that fits
-  const cellByW = Math.floor(maxW / ((COLS + ROWS) * 0.75 + 1));
-  const cellByH = Math.floor(maxH / ((COLS + ROWS) * 0.4 + 4));
-  CELL = Math.max(20, Math.min(cellByW, cellByH, 38));
-  W = Math.ceil((COLS + ROWS) * CELL * 0.75 + CELL * 2);
-  H = Math.ceil((COLS + ROWS) * CELL * 0.375 + CELL * 5);
+  const maxW = window.innerWidth - 8;
+  const maxH = window.innerHeight - (window.innerWidth <= 768 ? 180 : 60);
+  const cellByW = Math.floor(maxW / ((COLS + CAM_VISIBLE_ROWS) * 0.75 + 1));
+  const cellByH = Math.floor(maxH / ((COLS + CAM_VISIBLE_ROWS) * 0.4 + 2));
+  CELL = Math.max(28, Math.min(cellByW, cellByH, 60));
+  W = Math.ceil((COLS + CAM_VISIBLE_ROWS) * CELL * 0.75 + CELL * 2);
+  H = Math.ceil((COLS + CAM_VISIBLE_ROWS) * CELL * 0.4 + CELL * 3);
   canvas.width = W;
   canvas.height = H;
 }
@@ -928,6 +935,7 @@ function startGame() {
   bullets = []; hoodBullets = []; particles = [];
   flashEffect = 0; invincible = 0; frameCount = 0;
   transitioning = false; gameRunning = true;
+  camRow = START_ROW; camRowTarget = START_ROW;
 
   initVehicles(); initFrogs(); initHoodEnemies(); initMoneyStacks();
   updateHUD();
@@ -943,6 +951,7 @@ function startLevel() {
   bullets = []; hoodBullets = []; particles = [];
   flashEffect = 0; invincible = 0; frameCount = 0;
   transitioning = false; gameRunning = true;
+  camRow = START_ROW; camRowTarget = START_ROW;
   initVehicles(); initFrogs(); initHoodEnemies(); initMoneyStacks();
   updateHUD(); startBGMusic();
   requestAnimationFrame(gameLoop);
@@ -1246,8 +1255,7 @@ function gameLoop() {
 
   for (let i = particles.length - 1; i >= 0; i--) {
     const p = particles[i];
-    p.x += p.vx; p.y += p.vy; p.life--;
-    p.vy += 0.02;
+    p.wx += p.vx; p.wy += p.vy; p.life--;
     if (p.life <= 0) particles.splice(i, 1);
   }
 
@@ -1273,6 +1281,7 @@ function gameLoop() {
     }
   }
 
+  updateCamera();
   drawAll();
   requestAnimationFrame(gameLoop);
 }
@@ -1293,15 +1302,15 @@ function takeDamage(type) {
   if (lives <= 0) { setTimeout(gameOver, 300); gameRunning = false; }
 }
 
-// Spawn particles in iso screen coords
+// Particles stored in world coords, converted to screen each frame
 function spawnParticles(gx, gy, color) {
-  const iso = toIso(gx - 0.5, gy - 0.5);
   for (let i = 0; i < 12; i++) {
     const angle = (i / 12) * Math.PI * 2;
     particles.push({
-      x: iso.x, y: iso.y,
-      vx: Math.cos(angle) * (2 + Math.random() * 3),
-      vy: Math.sin(angle) * (2 + Math.random() * 3),
+      wx: gx - 0.5,
+      wy: gy - 0.5,
+      vx: Math.cos(angle) * 0.04,
+      vy: Math.sin(angle) * 0.04,
       color,
       life: 30 + Math.random() * 20,
     });
@@ -1362,9 +1371,9 @@ function getTileColor(row) {
 }
 
 function drawIsoGrid() {
-  // Draw back-to-front: row 0 first (back), row ROWS-1 last (front)
-  // Within each row, col 0 to COLS-1
-  for (let r = 0; r < ROWS; r++) {
+  const firstRow = Math.max(0,         Math.floor(camRow - CAM_VISIBLE_ROWS / 2) - 2);
+  const lastRow  = Math.min(ROWS - 1,  Math.ceil(camRow  + CAM_VISIBLE_ROWS / 2) + 2);
+  for (let r = firstRow; r <= lastRow; r++) {
     for (let c = 0; c < COLS; c++) {
       drawIsoTile(c, r);
     }
@@ -1536,11 +1545,12 @@ function drawAll() {
     ctx.restore();
   }
 
-  // Particles
+  // Particles — convert world to screen each frame
   for (const p of particles) {
+    const ps = toIso(p.wx, p.wy);
     ctx.globalAlpha = p.life / 50;
     ctx.fillStyle = p.color;
-    ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(ps.x, ps.y, 4, 0, Math.PI*2); ctx.fill();
     ctx.globalAlpha = 1;
   }
 
