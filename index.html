@@ -316,55 +316,8 @@ canvas {
   <button class="retry-btn" style="background:linear-gradient(135deg,#fff700,#00ffaa);color:#1a0a2e;" onclick="startGame()">Play Again</button>
 </div>
 
-<!-- SHOP -->
-<div id="shop-ui" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;flex-direction:column;align-items:center;justify-content:center;z-index:200;background:rgba(10,5,20,0.95);backdrop-filter:blur(10px);">
-  <div style="font-size:32px;margin-bottom:4px;">🏪 STOP & SHOP</div>
-  <div style="color:#aaa;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;font-family:Courier New">The Block Store</div>
-  <div style="color:#fff700;font-size:20px;font-weight:700;font-family:Courier New;margin-bottom:20px;">Balance: <span id="shop-racks">$0</span></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:360px;width:100%;">
-    <div onclick="buyItem('gun1')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#fff700'" onmouseout="this.style.borderColor='#333'">
-      <div style="font-size:24px">🔫</div>
-      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Pistol</div>
-      <div style="color:#aaa;font-size:11px;font-family:Courier New">Shoot back at frogs</div>
-      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$200</div>
-    </div>
-    <div onclick="buyItem('gun2')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#ff4400'" onmouseout="this.style.borderColor='#333'">
-      <div style="font-size:24px">🔥</div>
-      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Uzi</div>
-      <div style="color:#aaa;font-size:11px;font-family:Courier New">Rapid fire upgrade</div>
-      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$500</div>
-    </div>
-    <div onclick="buyItem('armor')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#aaaaff'" onmouseout="this.style.borderColor='#333'">
-      <div style="font-size:24px">🛡️</div>
-      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Armor</div>
-      <div style="color:#aaa;font-size:11px;font-family:Courier New">+1 armor hit buffer</div>
-      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$300</div>
-    </div>
-    <div onclick="buyItem('rolex')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#ffd700'" onmouseout="this.style.borderColor='#333'">
-      <div style="font-size:24px">⌚</div>
-      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Rolex</div>
-      <div style="color:#aaa;font-size:11px;font-family:Courier New">Aura: 30% dodge chance</div>
-      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$800</div>
-    </div>
-    <div onclick="buyItem('life')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#ff6666'" onmouseout="this.style.borderColor='#333'">
-      <div style="font-size:24px">❤️</div>
-      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Extra Life</div>
-      <div style="color:#aaa;font-size:11px;font-family:Courier New">Buy another shot at it</div>
-      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$400</div>
-    </div>
-    <div onclick="buyItem('ammo')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#ffff00'" onmouseout="this.style.borderColor='#333'">
-      <div style="font-size:24px">🔋</div>
-      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Restock Ammo</div>
-      <div style="color:#aaa;font-size:11px;font-family:Courier New">Need gun first</div>
-      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$100</div>
-    </div>
-  </div>
-  <div id="shop-msg" style="color:#00ff88;font-family:Courier New;font-size:13px;margin-top:12px;min-height:20px;transition:opacity 0.5s;opacity:0;"></div>
-  <button onclick="closeShop()" style="margin-top:20px;background:linear-gradient(135deg,#333,#111);color:#aaa;border:1px solid #444;padding:10px 32px;border-radius:50px;font-family:Courier New;font-size:14px;cursor:pointer;letter-spacing:0.08em;">Leave Store [E]</button>
-</div>
-
-<!-- SHOP HINT -->
-<div id="shop-hint" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff700;font-family:Courier New;font-size:13px;padding:8px 20px;border-radius:20px;border:1px solid rgba(255,215,0,0.3);z-index:50;pointer-events:none;letter-spacing:0.06em;"></div>
+<!-- PICKUP TOAST -->
+<div id="pickup-toast" style="display:none;position:fixed;top:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);border-radius:16px;padding:10px 24px;font-family:Courier New;font-size:15px;font-weight:700;letter-spacing:0.08em;z-index:80;pointer-events:none;border:1px solid rgba(255,255,255,0.15);transition:opacity 0.4s;"></div>
 
 <!-- LEVEL CLEAR -->
 <div id="level-ui" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;flex-direction:column;align-items:center;justify-content:center;z-index:100;background:rgba(15,5,30,0.93);backdrop-filter:blur(8px);">
@@ -405,9 +358,7 @@ canvas {
       <div class="action-btn" id="shoot-btn"
            ontouchstart="mobileFire();"
            style="display:none;">🔫</div>
-      <div class="action-btn" id="shop-btn-mobile"
-           ontouchstart="mobileShop();"
-           style="display:none;">🏪</div>
+    
     </div>
   </div>
 </div>
@@ -548,20 +499,21 @@ let transitionMsg = '';
 
 // Economy
 let racks = 0;
-let gun = 0;
 let armor = 0;
 let rolex = false;
 let maxLives = 3;
 
-// Shooting
+// Weapon system — pickup based
+// gun: 0=none, 1=glock, 2=gold_glock, 3=draco
+let gun = 0;
 let ammo = 0;
 let duckBullets = [];
 let shootCD = 0;
 let enemyHP = {};
+let screenShake = 0;
 
-// Shop state
-let inShop = false;
-let shopRow = -1;
+// Pickup items on ground
+let groundPickups = [];
 
 // Hood enemies
 let hoodEnemies = [];
@@ -759,6 +711,83 @@ document.addEventListener('keydown', unlockAudio, {once: true});
 document.addEventListener('touchstart', unlockAudio, {once: true});
 
 // =============================================
+// WEAPON SFX (synthesized)
+// =============================================
+function playGunshot(type) {
+  if (!audioCtx || masterVol === 0) return;
+  const ac = getAudioCtx();
+  const now = ac.currentTime;
+  if (type === 1) {
+    // Glock — sharp pop
+    const buf = ac.createBuffer(1, ac.sampleRate * 0.12, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random()*2-1) * Math.exp(-i / (ac.sampleRate * 0.015));
+    const src = ac.createBufferSource();
+    const g = ac.createGain();
+    src.buffer = buf; g.gain.value = masterVol * 0.9;
+    src.connect(g); g.connect(ac.destination); src.start();
+    // tone click
+    const osc = ac.createOscillator();
+    const og = ac.createGain();
+    osc.frequency.value = 180; osc.type = 'square';
+    og.gain.setValueAtTime(masterVol*0.4, now);
+    og.gain.exponentialRampToValueAtTime(0.001, now+0.06);
+    osc.connect(og); og.connect(ac.destination);
+    osc.start(now); osc.stop(now+0.06);
+  } else if (type === 2) {
+    // Gold Glock w/ switch — rapid burst click
+    for (let s = 0; s < 3; s++) {
+      const t = now + s * 0.04;
+      const osc = ac.createOscillator();
+      const og = ac.createGain();
+      osc.frequency.value = 220 + s * 30; osc.type = 'sawtooth';
+      og.gain.setValueAtTime(masterVol*0.5, t);
+      og.gain.exponentialRampToValueAtTime(0.001, t+0.05);
+      osc.connect(og); og.connect(ac.destination);
+      osc.start(t); osc.stop(t+0.05);
+    }
+  } else if (type === 3) {
+    // Black Draco — deep heavy rattle
+    const buf = ac.createBuffer(1, ac.sampleRate * 0.22, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random()*2-1) * Math.exp(-i / (ac.sampleRate * 0.04));
+    const src = ac.createBufferSource();
+    const g = ac.createGain();
+    src.buffer = buf; g.gain.value = masterVol * 1.2;
+    const filter = ac.createBiquadFilter();
+    filter.type = 'lowpass'; filter.frequency.value = 600;
+    src.connect(filter); filter.connect(g); g.connect(ac.destination); src.start();
+    // deep thump
+    const osc = ac.createOscillator();
+    const og = ac.createGain();
+    osc.frequency.setValueAtTime(90, now); osc.frequency.exponentialRampToValueAtTime(30, now+0.15);
+    osc.type = 'sine';
+    og.gain.setValueAtTime(masterVol*0.8, now);
+    og.gain.exponentialRampToValueAtTime(0.001, now+0.18);
+    osc.connect(og); og.connect(ac.destination);
+    osc.start(now); osc.stop(now+0.18);
+    screenShake = 12;
+  }
+}
+
+function playPickupSound(type) {
+  if (!audioCtx || masterVol === 0) return;
+  const ac = getAudioCtx();
+  const now = ac.currentTime;
+  const freqs = type === 'draco' ? [120,180,240] : type === 'gold_glock' ? [440,550,660] : [330,440,550];
+  freqs.forEach((f, i) => {
+    const osc = ac.createOscillator();
+    const g = ac.createGain();
+    const t = now + i * 0.06;
+    osc.frequency.value = f; osc.type = 'sine';
+    g.gain.setValueAtTime(masterVol*0.4, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t+0.12);
+    osc.connect(g); g.connect(ac.destination);
+    osc.start(t); osc.stop(t+0.12);
+  });
+}
+
+// =============================================
 // MONEY STACKS
 // =============================================
 let moneyStacks = [];
@@ -812,21 +841,24 @@ const ROAD_ROWS_TOP = [1, 2, 3, 4, 5];
 const SAFE_ROWS = [6, 7, 13, 14];
 const ROAD_ROWS_BOT = [8, 9, 10, 11, 12, 15, 16, 17];
 
+// vehicle types: sedan, suv, pickup, bus, sports
 const laneConfigs = {
-  1:  { dir: 1,  speed: 0.018, color: '#cc3333', type: 'car' },
-  2:  { dir: -1, speed: 0.020, color: '#cc6600', type: 'truck' },
-  3:  { dir: 1,  speed: 0.015, color: '#cc3399', type: 'car' },
-  4:  { dir: -1, speed: 0.022, color: '#9900cc', type: 'car' },
-  5:  { dir: 1,  speed: 0.013, color: '#cc0000', type: 'truck' },
-  8:  { dir: -1, speed: 0.013, color: '#0066cc', type: 'car' },
-  9:  { dir: 1,  speed: 0.017, color: '#006633', type: 'truck' },
-  10: { dir: -1, speed: 0.015, color: '#cc6600', type: 'car' },
-  11: { dir: 1,  speed: 0.011, color: '#cc3333', type: 'car' },
-  12: { dir: -1, speed: 0.018, color: '#6600cc', type: 'car' },
-  15: { dir: 1,  speed: 0.009, color: '#cc4400', type: 'car' },
-  16: { dir: -1, speed: 0.011, color: '#0044cc', type: 'truck' },
-  17: { dir: 1,  speed: 0.008, color: '#aa3399', type: 'car' },
+  1:  { dir: 1,  speed: 0.018, color: '#cc3333', type: 'sedan' },
+  2:  { dir: -1, speed: 0.014, color: '#2255aa', type: 'bus' },
+  3:  { dir: 1,  speed: 0.015, color: '#cc3399', type: 'sports' },
+  4:  { dir: -1, speed: 0.022, color: '#558833', type: 'suv' },
+  5:  { dir: 1,  speed: 0.013, color: '#aa6600', type: 'pickup' },
+  8:  { dir: -1, speed: 0.013, color: '#0066cc', type: 'sedan' },
+  9:  { dir: 1,  speed: 0.017, color: '#884400', type: 'pickup' },
+  10: { dir: -1, speed: 0.015, color: '#cc6600', type: 'suv' },
+  11: { dir: 1,  speed: 0.011, color: '#993333', type: 'sedan' },
+  12: { dir: -1, speed: 0.018, color: '#6600cc', type: 'sports' },
+  15: { dir: 1,  speed: 0.009, color: '#cc4400', type: 'sedan' },
+  16: { dir: -1, speed: 0.009, color: '#1144bb', type: 'bus' },
+  17: { dir: 1,  speed: 0.008, color: '#aa3399', type: 'suv' },
 };
+
+const VEHICLE_WIDTHS = { sedan:1.6, suv:1.9, pickup:2.0, bus:2.8, sports:1.5 };
 
 let vehicles = [];
 
@@ -835,16 +867,17 @@ function initVehicles() {
   const trafficMult = LEVELS[currentLevel - 1].trafficMult;
   for (const [rowStr, cfg] of Object.entries(laneConfigs)) {
     const row = parseInt(rowStr);
-    const count = cfg.type === 'truck' ? 1 : 2;
+    const count = (cfg.type === 'bus' || cfg.type === 'pickup') ? 1 : 2;
+    const vw = VEHICLE_WIDTHS[cfg.type] || 1.6;
     for (let i = 0; i < count; i++) {
       vehicles.push({
         row,
-        x: (i / count) * COLS + Math.random() * 1.5,
+        x: (i / count) * COLS + Math.random() * 2,
         dir: cfg.dir,
         speed: cfg.speed * trafficMult * (0.85 + Math.random() * 0.3),
         color: cfg.color,
         type: cfg.type,
-        width: cfg.type === 'truck' ? 2.4 : 1.6,
+        width: vw,
       });
     }
   }
@@ -891,6 +924,42 @@ function initMoneyStacks() {
   }
 }
 
+function initGroundPickups() {
+  groundPickups = [];
+  const allRows = [...SAFE_ROWS, ...ROAD_ROWS_TOP, ...ROAD_ROWS_BOT];
+  // Weapon pickups — scattered across map
+  // Glock: common (2-3), Gold Glock: uncommon (1), Draco: rare (0-1), Ammo: scarce (1-2)
+  const weaponPool = [];
+  for (let i = 0; i < 3; i++) weaponPool.push('glock');
+  if (Math.random() < 0.75) weaponPool.push('gold_glock');
+  if (Math.random() < 0.4)  weaponPool.push('draco');
+  for (let i = 0; i < 2; i++) if (Math.random() < 0.5) weaponPool.push('ammo');
+
+  const usedCells = new Set();
+  for (const kind of weaponPool) {
+    let tries = 0, row, col;
+    do {
+      row = allRows[Math.floor(Math.random() * allRows.length)];
+      col = Math.floor(Math.random() * COLS);
+      tries++;
+    } while (usedCells.has(`${col}_${row}`) && tries < 30);
+    usedCells.add(`${col}_${row}`);
+    groundPickups.push({ col, row, kind, collected: false, bob: Math.random() * Math.PI * 2 });
+  }
+}
+
+function showPickupToast(msg, color) {
+  const el = document.getElementById('pickup-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = color || '#fff700';
+  el.style.borderColor = (color || '#fff700') + '55';
+  el.style.display = 'block';
+  el.style.opacity = '1';
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.style.display='none', 400); }, 1800);
+}
+
 function initFrogs() {
   frogs = [];
   const lvl = LEVELS[currentLevel - 1];
@@ -929,15 +998,14 @@ function startGame() {
 
   score = 0; lives = 3; maxLives = 3; currentLevel = 1;
   racks = 0; gun = 0; armor = 0; rolex = false;
-  ammo = 0; duckBullets = []; enemyHP = {}; shootCD = 0;
-  inShop = false;
+  ammo = 0; duckBullets = []; enemyHP = {}; shootCD = 0; screenShake = 0;
   duck = { col: 5, row: START_ROW };
-  bullets = []; hoodBullets = []; particles = [];
+  bullets = []; hoodBullets = []; particles = []; groundPickups = [];
   flashEffect = 0; invincible = 0; frameCount = 0;
   transitioning = false; gameRunning = true;
   camRow = START_ROW; camRowTarget = START_ROW;
 
-  initVehicles(); initFrogs(); initHoodEnemies(); initMoneyStacks();
+  initVehicles(); initFrogs(); initHoodEnemies(); initMoneyStacks(); initGroundPickups();
   updateHUD();
   stopAllBangSounds(); stopDuckVoice(); startBGMusic();
   requestAnimationFrame(gameLoop);
@@ -946,32 +1014,36 @@ function startGame() {
 function startLevel() {
   document.getElementById('level-ui').style.display = 'none';
   document.getElementById('hud').style.display = 'flex';
-  inShop = false; duckBullets = []; enemyHP = {}; shootCD = 0;
+  duckBullets = []; enemyHP = {}; shootCD = 0; screenShake = 0; gun = 0; ammo = 0;
   duck = { col: 5, row: START_ROW };
-  bullets = []; hoodBullets = []; particles = [];
+  bullets = []; hoodBullets = []; particles = []; groundPickups = [];
   flashEffect = 0; invincible = 0; frameCount = 0;
   transitioning = false; gameRunning = true;
   camRow = START_ROW; camRowTarget = START_ROW;
-  initVehicles(); initFrogs(); initHoodEnemies(); initMoneyStacks();
+  initVehicles(); initFrogs(); initHoodEnemies(); initMoneyStacks(); initGroundPickups();
   updateHUD(); startBGMusic();
   requestAnimationFrame(gameLoop);
 }
 
+const GUN_NAMES = { 0:'', 1:'GLOCK', 2:'GOLD GLOCK🔥', 3:'DRACO🐉' };
+const GUN_COLORS = { 1:'#ffffff', 2:'#ffd700', 3:'#ff4400' };
+
 function updateHUD() {
   document.getElementById('score-display').textContent = score;
   document.getElementById('best-display').textContent = highScore;
-  document.getElementById('lives-display').textContent = 'H'.repeat(lives) + 'A'.repeat(armor) + '_'.repeat(Math.max(0, 3 - lives));
+  document.getElementById('lives-display').textContent = '❤️'.repeat(lives) + '🛡️'.repeat(armor);
   const lvl = LEVELS[currentLevel - 1];
-  document.getElementById('level-display').textContent = 'Lvl ' + currentLevel + ' - ' + lvl.goalName;
+  document.getElementById('level-display').textContent = 'Lvl ' + currentLevel + ' — ' + lvl.goalName;
   const racksEl = document.getElementById('racks-display');
-  if (racksEl) racksEl.textContent = 'Racks: $' + racks;
+  if (racksEl) racksEl.textContent = '$' + racks;
   const buffsEl = document.getElementById('buffs-display');
   if (buffsEl) {
-    let buffs = '';
-    if (rolex) buffs += '[ROLEX] ';
-    if (gun === 1) buffs += '[GUN]x' + ammo + ' ';
-    if (gun === 2) buffs += '[UZI]x' + ammo + ' ';
-    buffsEl.textContent = buffs;
+    if (gun > 0) {
+      buffsEl.textContent = GUN_NAMES[gun] + ' ×' + ammo;
+      buffsEl.style.color = GUN_COLORS[gun] || '#fff';
+    } else {
+      buffsEl.textContent = '';
+    }
   }
 }
 
@@ -998,9 +1070,6 @@ document.addEventListener('keydown', e => {
 });
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'e' || e.key === 'E') {
-    if (gameRunning && SAFE_ROWS.includes(duck.row)) openShop();
-  }
   if (e.key === ' ' && gameRunning && gun > 0 && ammo > 0 && shootCD <= 0) {
     e.preventDefault();
     fireDuckBullet();
@@ -1010,57 +1079,26 @@ document.addEventListener('keydown', e => {
 function fireDuckBullet() {
   if (ammo <= 0 || gun === 0) return;
   ammo--;
-  const spreadAngles = gun === 2 ? [-0.3, 0, 0.3] : [0];
-  for (const angle of spreadAngles) {
+  playGunshot(gun);
+  // Glock: single shot | Gold Glock: 3-burst | Draco: 5-spray
+  const configs = {
+    1: { angles: [0],                         speed: 0.14, life: 160 },
+    2: { angles: [-0.08, 0, 0.08],             speed: 0.15, life: 160 },
+    3: { angles: [-0.25,-0.1,0,0.1,0.25],      speed: 0.13, life: 140 },
+  };
+  const cfg = configs[gun];
+  for (const angle of cfg.angles) {
     duckBullets.push({
-      x: duck.col + 0.5,
-      y: duck.row + 0.5,
-      vx: Math.sin(angle) * 0.12,
-      vy: -0.12,
-      life: 160,
+      x: duck.col + 0.5, y: duck.row + 0.5,
+      vx: Math.sin(angle) * cfg.speed,
+      vy: -cfg.speed,
+      life: cfg.life,
+      gunType: gun,
     });
   }
-  shootCD = gun === 2 ? 8 : 18;
+  shootCD = gun === 2 ? 5 : gun === 3 ? 10 : 16;
   updateHUD();
-}
-
-function openShop() {
-  gameRunning = false; inShop = true;
-  document.getElementById('shop-hint').style.display = 'none';
-  document.getElementById('shop-racks').textContent = `$${racks}`;
-  document.getElementById('shop-ui').style.display = 'flex';
-}
-
-function buyItem(item) {
-  if (item === 'gun1' && racks >= 200 && gun < 1) {
-    racks -= 200; gun = 1; ammo += 6; updateHUD(); showShopMsg('Pistol equipped. 6 shots loaded.');
-  } else if (item === 'gun2' && racks >= 500 && gun >= 1) {
-    racks -= 500; gun = 2; ammo += 12; updateHUD(); showShopMsg('Uzi equipped. 12 shots loaded.');
-  } else if (item === 'gun2' && racks >= 500 && gun < 1) {
-    racks -= 500; gun = 2; ammo += 12; updateHUD(); showShopMsg('Uzi equipped. 12 shots loaded.');
-  } else if (item === 'ammo' && racks >= 100 && gun > 0) {
-    racks -= 100; ammo += (gun === 2 ? 8 : 5); updateHUD(); showShopMsg('Ammo restocked.');
-  } else if (item === 'armor' && racks >= 300) {
-    racks -= 300; armor = Math.min(armor+1,3); updateHUD(); showShopMsg('Armor equipped.');
-  } else if (item === 'rolex' && racks >= 800 && !rolex) {
-    racks -= 800; rolex = true; updateHUD(); showShopMsg('Rolex on. Aura activated.');
-  } else if (item === 'life' && racks >= 400) {
-    racks -= 400; lives = Math.min(lives+1,5); updateHUD(); showShopMsg('+1 life. Dont waste it.');
-  } else {
-    showShopMsg('Not enough racks or already equipped.');
-  }
-  document.getElementById('shop-racks').textContent = `$${racks}`;
-}
-
-function showShopMsg(msg) {
-  const el = document.getElementById('shop-msg');
-  if (el) { el.textContent = msg; el.style.opacity = '1'; setTimeout(() => el.style.opacity='0', 2000); }
-}
-
-function closeShop() {
-  document.getElementById('shop-ui').style.display = 'none';
-  inShop = false; gameRunning = true;
-  requestAnimationFrame(gameLoop);
+  updateMobileButtons();
 }
 
 // =============================================
@@ -1108,17 +1146,9 @@ function mobileFire() {
   fireDuckBullet();
 }
 
-function mobileShop() {
-  if (!gameRunning) return;
-  unlockAudio();
-  if (SAFE_ROWS.includes(duck.row)) openShop();
-}
-
 function updateMobileButtons() {
   const shootEl = document.getElementById('shoot-btn');
-  const shopEl  = document.getElementById('shop-btn-mobile');
-  if (shootEl) shootEl.style.display = (gun > 0) ? 'flex' : 'none';
-  if (shopEl)  shopEl.style.display  = (SAFE_ROWS.includes(duck.row)) ? 'flex' : 'none';
+  if (shootEl) shootEl.style.display = (gun > 0 && ammo > 0) ? 'flex' : 'none';
 }
 
 // Canvas swipe fallback (for devices where D-pad is hidden)
@@ -1245,12 +1275,34 @@ function gameLoop() {
     }
   }
 
-  if (SAFE_ROWS.includes(duck.row) && !inShop) {
-    document.getElementById('shop-hint').style.display = 'block';
-    document.getElementById('shop-hint').textContent = '[E] Shop — $' + racks;
-  } else {
-    document.getElementById('shop-hint').style.display = 'none';
+  // Weapon / ammo pickups
+  for (const p of groundPickups) {
+    if (!p.collected && p.col === duck.col && p.row === duck.row) {
+      p.collected = true;
+      playPickupSound(p.kind);
+      if (p.kind === 'glock') {
+        gun = Math.max(gun, 1); ammo += 8;
+        showPickupToast('GLOCK PICKED UP — 8 rounds', '#ffffff');
+        spawnParticles(duck.col+0.5, duck.row+0.5, '#aaaaff');
+      } else if (p.kind === 'gold_glock') {
+        gun = Math.max(gun, 2); ammo += 12;
+        showPickupToast('GOLD GLOCK W/ SWITCH 🔥 — 12 rounds', '#ffd700');
+        spawnParticles(duck.col+0.5, duck.row+0.5, '#ffd700');
+      } else if (p.kind === 'draco') {
+        gun = 3; ammo += 20;
+        showPickupToast('BLACK DRACO 🐉 — 20 rounds. GO CRAZY.', '#ff4400');
+        spawnParticles(duck.col+0.5, duck.row+0.5, '#ff4400');
+      } else if (p.kind === 'ammo') {
+        const bonus = gun === 3 ? 10 : gun === 2 ? 8 : 6;
+        ammo += bonus;
+        showPickupToast('AMMO +' + bonus, '#88ff88');
+        spawnParticles(duck.col+0.5, duck.row+0.5, '#88ff88');
+      }
+      updateHUD(); updateMobileButtons();
+    }
   }
+
+  if (screenShake > 0) screenShake--;
   updateMobileButtons();
 
   for (let i = particles.length - 1; i >= 0; i--) {
@@ -1463,6 +1515,9 @@ function drawAll() {
     ctx.fillRect(0, 0, W, H);
   }
 
+  ctx.save();
+  applyScreenShake();
+
   // Draw grid tiles (back to front)
   drawIsoGrid();
 
@@ -1492,12 +1547,20 @@ function drawAll() {
   // Duck
   drawables.push({ depth: duck.col + duck.row + 0.5, type: 'duck', data: duck });
 
+
+
+  // Ground pickups
+  for (const p of groundPickups) {
+    if (!p.collected) drawables.push({ depth: p.col + p.row + 0.05, type: 'pickup', data: p });
+  }
+
   // Sort by depth
   drawables.sort((a, b) => a.depth - b.depth);
 
   // Draw sorted entities
   for (const d of drawables) {
     if (d.type === 'money')   drawIsoMoney(d.data);
+    if (d.type === 'pickup')  drawIsoPickup(d.data);
     if (d.type === 'vehicle') drawIsoVehicle(d.data);
     if (d.type === 'frog')    drawIsoFrog(d.data);
     if (d.type === 'hood')    drawIsoHoodEnemy(d.data);
@@ -1560,6 +1623,16 @@ function drawAll() {
   vig.addColorStop(1, 'rgba(0,0,0,0.5)');
   ctx.fillStyle = vig;
   ctx.fillRect(0, 0, W, H);
+
+  ctx.restore(); // restore screen shake
+}
+
+function applyScreenShake() {
+  if (screenShake > 0) {
+    const dx = (Math.random()-0.5) * screenShake * 1.5;
+    const dy = (Math.random()-0.5) * screenShake * 1.5;
+    ctx.translate(dx, dy);
+  }
 }
 
 // =============================================
@@ -1569,65 +1642,215 @@ function drawAll() {
 function drawIsoVehicle(v) {
   const iso = toIso(v.x + v.width / 2, v.row);
   const cx = iso.x, cy = iso.y;
-  const vw = v.width * CELL * 0.75; // projected width along iso row
-  const vh = CELL * 0.6;   // visual height of box
-  const vd = CELL * 0.28;  // depth (side face)
+  const vw = v.width * CELL * 0.72;
+  const hw = vw * 0.5;
+  const hh = CELL * 0.375 * 0.6;
+
+  // Vehicle height varies by type
+  const heights = { sedan:0.52, suv:0.65, pickup:0.58, bus:0.72, sports:0.38 };
+  const vh = CELL * (heights[v.type] || 0.52);
 
   ctx.save();
   ctx.shadowColor = v.color;
-  ctx.shadowBlur = 8;
+  ctx.shadowBlur = 6;
 
-  // Top face (diamond shape, stretched along row direction)
-  const hw = vw * 0.5;
-  const hh = CELL * 0.375 * 0.65;
-
-  // Top face
-  ctx.fillStyle = lightenHex(v.color, 0.35);
+  // === TOP FACE ===
+  ctx.fillStyle = lightenHex(v.color, 0.3);
   ctx.beginPath();
   ctx.moveTo(cx,      cy - vh - hh);
   ctx.lineTo(cx + hw, cy - vh);
   ctx.lineTo(cx,      cy - vh + hh);
   ctx.lineTo(cx - hw, cy - vh);
-  ctx.closePath();
-  ctx.fill();
+  ctx.closePath(); ctx.fill();
 
-  // Left side face
+  // === LEFT FACE ===
   ctx.fillStyle = v.color;
   ctx.beginPath();
   ctx.moveTo(cx - hw, cy - vh);
   ctx.lineTo(cx,      cy - vh + hh);
   ctx.lineTo(cx,      cy + hh);
   ctx.lineTo(cx - hw, cy);
-  ctx.closePath();
-  ctx.fill();
+  ctx.closePath(); ctx.fill();
 
-  // Right side face
-  ctx.fillStyle = darkenHex(v.color, 0.55);
+  // === RIGHT FACE (darkest) ===
+  ctx.fillStyle = darkenHex(v.color, 0.48);
   ctx.beginPath();
   ctx.moveTo(cx + hw, cy - vh);
   ctx.lineTo(cx,      cy - vh + hh);
   ctx.lineTo(cx,      cy + hh);
   ctx.lineTo(cx + hw, cy);
-  ctx.closePath();
-  ctx.fill();
+  ctx.closePath(); ctx.fill();
 
-  // Window stripe on top face
-  ctx.fillStyle = 'rgba(130,210,255,0.35)';
-  ctx.beginPath();
-  const winW = hw * 0.45;
-  ctx.moveTo(cx - winW * 0.4, cy - vh - hh * 0.5);
-  ctx.lineTo(cx + winW * 0.4, cy - vh - hh * 0.5);
-  ctx.lineTo(cx + winW * 0.1, cy - vh + hh * 0.2);
-  ctx.lineTo(cx - winW * 0.1, cy - vh + hh * 0.2);
-  ctx.closePath();
-  ctx.fill();
+  ctx.shadowBlur = 0;
 
-  // Headlights glow
-  ctx.shadowColor = '#ffffaa';
-  ctx.shadowBlur = 12;
-  ctx.fillStyle = '#ffffaa';
-  const lightX = v.dir === 1 ? cx + hw - 3 : cx - hw + 3;
-  ctx.fillRect(lightX - 2, cy - vh * 0.4, 4, vh * 0.2);
+  // === TYPE-SPECIFIC DETAILS ===
+  if (v.type === 'bus') {
+    // Bus: multiple windows on left face
+    const winCount = 4;
+    for (let i = 0; i < winCount; i++) {
+      const t = (i + 0.5) / winCount;
+      const wx = cx - hw + t * hw;
+      const wy = cy - vh * 0.55;
+      ctx.fillStyle = 'rgba(180,230,255,0.55)';
+      ctx.fillRect(wx - 3, wy - 4, 5, 7);
+    }
+    // Bus stripe
+    ctx.fillStyle = darkenHex(v.color, 0.25);
+    ctx.fillRect(cx - hw, cy - vh * 0.28, hw, vh * 0.1);
+  } else if (v.type === 'sports') {
+    // Low wide windshield
+    ctx.fillStyle = 'rgba(150,230,255,0.5)';
+    ctx.beginPath();
+    ctx.moveTo(cx - hw*0.3, cy - vh - hh*0.6);
+    ctx.lineTo(cx + hw*0.3, cy - vh - hh*0.6);
+    ctx.lineTo(cx + hw*0.15, cy - vh - hh*0.1);
+    ctx.lineTo(cx - hw*0.15, cy - vh - hh*0.1);
+    ctx.closePath(); ctx.fill();
+    // Spoiler on right side
+    ctx.fillStyle = darkenHex(v.color, 0.3);
+    const sx = v.dir === 1 ? cx - hw : cx + hw;
+    ctx.fillRect(sx - 2, cy - vh - 4, 4, 6);
+  } else if (v.type === 'suv') {
+    // SUV: roof rack lines on top
+    ctx.strokeStyle = darkenHex(v.color, 0.3);
+    ctx.lineWidth = 1;
+    for (let i = -1; i <= 1; i++) {
+      ctx.beginPath();
+      ctx.moveTo(cx + i * hw * 0.3, cy - vh - hh);
+      ctx.lineTo(cx + i * hw * 0.3 + hh * 0.8, cy - vh);
+      ctx.stroke();
+    }
+    // Windshield
+    ctx.fillStyle = 'rgba(140,210,255,0.4)';
+    ctx.beginPath();
+    ctx.moveTo(cx - hw*0.25, cy - vh - hh*0.55);
+    ctx.lineTo(cx + hw*0.25, cy - vh - hh*0.55);
+    ctx.lineTo(cx + hw*0.1,  cy - vh + hh*0.1);
+    ctx.lineTo(cx - hw*0.1,  cy - vh + hh*0.1);
+    ctx.closePath(); ctx.fill();
+  } else if (v.type === 'pickup') {
+    // Truck bed — darker back half on top face
+    ctx.fillStyle = darkenHex(v.color, 0.2);
+    ctx.beginPath();
+    ctx.moveTo(cx - hw*0.1, cy - vh - hh);
+    ctx.lineTo(cx - hw,     cy - vh);
+    ctx.lineTo(cx - hw*0.1, cy - vh);
+    ctx.closePath(); ctx.fill();
+    // Windshield (front)
+    ctx.fillStyle = 'rgba(150,220,255,0.4)';
+    ctx.beginPath();
+    ctx.moveTo(cx + hw*0.05, cy - vh - hh*0.7);
+    ctx.lineTo(cx + hw*0.5,  cy - vh - hh*0.35);
+    ctx.lineTo(cx + hw*0.4,  cy - vh + hh*0.1);
+    ctx.lineTo(cx,           cy - vh + hh*0.1);
+    ctx.closePath(); ctx.fill();
+  } else {
+    // Sedan windshield
+    ctx.fillStyle = 'rgba(140,215,255,0.38)';
+    ctx.beginPath();
+    ctx.moveTo(cx - hw*0.2, cy - vh - hh*0.5);
+    ctx.lineTo(cx + hw*0.2, cy - vh - hh*0.5);
+    ctx.lineTo(cx + hw*0.08, cy - vh + hh*0.1);
+    ctx.lineTo(cx - hw*0.08, cy - vh + hh*0.1);
+    ctx.closePath(); ctx.fill();
+  }
+
+  // Wheels — two dark ellipses
+  ctx.fillStyle = '#111';
+  ctx.strokeStyle = '#444'; ctx.lineWidth = 1;
+  [[-hw*0.55, hh*0.6],[hw*0.55, -hh*0.2]].forEach(([ox,oy]) => {
+    ctx.beginPath();
+    ctx.ellipse(cx+ox, cy+oy, CELL*0.09, CELL*0.05, 0, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+  });
+
+  // Headlights
+  ctx.shadowColor = '#ffffaa'; ctx.shadowBlur = 10;
+  ctx.fillStyle = '#ffffee';
+  const lx = v.dir === 1 ? cx + hw - 2 : cx - hw + 2;
+  ctx.fillRect(lx - 2, cy - vh * 0.35, 4, vh * 0.18);
+  // Tail lights
+  ctx.shadowColor = '#ff2200'; ctx.shadowBlur = 6;
+  ctx.fillStyle = '#ff2200';
+  const tx = v.dir === 1 ? cx - hw + 2 : cx + hw - 2;
+  ctx.fillRect(tx - 2, cy - vh * 0.35, 4, vh * 0.18);
+
+  ctx.restore();
+}
+
+function drawIsoPickup(p) {
+  const bob = Math.sin(frameCount * 0.08 + p.bob) * 3;
+  const iso = toIso(p.col + 0.5, p.row + 0.5);
+  const cx = iso.x, cy = iso.y - CELL * 0.2 - bob;
+  const s = CELL * 0.2;
+
+  ctx.save();
+
+  if (p.kind === 'glock') {
+    ctx.shadowColor = '#aaaaff'; ctx.shadowBlur = 12;
+    // Gun body (dark gray iso box)
+    const hw = s * 0.8, hh2 = s * 0.3, bh = s * 0.5;
+    ctx.fillStyle = '#555';
+    ctx.beginPath(); ctx.moveTo(cx,cy-bh-hh2); ctx.lineTo(cx+hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx-hw,cy-bh); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#444';
+    ctx.beginPath(); ctx.moveTo(cx-hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx,cy+hh2); ctx.lineTo(cx-hw,cy); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#333';
+    ctx.beginPath(); ctx.moveTo(cx+hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx,cy+hh2); ctx.lineTo(cx+hw,cy); ctx.closePath(); ctx.fill();
+    // Barrel
+    ctx.fillStyle = '#666'; ctx.fillRect(cx + hw - 1, cy - bh * 0.6, s * 0.6, s * 0.15);
+    // Label
+    ctx.fillStyle = 'rgba(180,180,255,0.8)'; ctx.font = `bold ${CELL*0.13}px Courier New`;
+    ctx.textAlign = 'center'; ctx.fillText('GLOCK', cx, cy - bh - hh2 - 4);
+  } else if (p.kind === 'gold_glock') {
+    const pulse = 0.7 + 0.3 * Math.abs(Math.sin(frameCount * 0.07));
+    ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 18 * pulse;
+    const hw = s * 0.8, hh2 = s * 0.3, bh = s * 0.5;
+    ctx.fillStyle = lightenHex('#cc9900', 0.25);
+    ctx.beginPath(); ctx.moveTo(cx,cy-bh-hh2); ctx.lineTo(cx+hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx-hw,cy-bh); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#cc9900';
+    ctx.beginPath(); ctx.moveTo(cx-hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx,cy+hh2); ctx.lineTo(cx-hw,cy); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = darkenHex('#cc9900', 0.4);
+    ctx.beginPath(); ctx.moveTo(cx+hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx,cy+hh2); ctx.lineTo(cx+hw,cy); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#ffd700'; ctx.fillRect(cx+hw-1, cy-bh*0.6, s*0.7, s*0.15);
+    // Switch indicator dot
+    ctx.fillStyle = '#ff4400'; ctx.shadowColor='#ff4400'; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.arc(cx, cy-bh-hh2*0.2, s*0.15, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,215,0,0.9)'; ctx.shadowBlur=0; ctx.font = `bold ${CELL*0.13}px Courier New`;
+    ctx.textAlign = 'center'; ctx.fillText('GOLD🔥', cx, cy - bh - hh2 - 4);
+  } else if (p.kind === 'draco') {
+    const pulse = 0.6 + 0.4 * Math.abs(Math.sin(frameCount * 0.05));
+    ctx.shadowColor = '#ff4400'; ctx.shadowBlur = 20 * pulse;
+    const hw = s * 1.2, hh2 = s * 0.35, bh = s * 0.45;
+    ctx.fillStyle = '#1a1a1a';
+    ctx.beginPath(); ctx.moveTo(cx,cy-bh-hh2); ctx.lineTo(cx+hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx-hw,cy-bh); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#111';
+    ctx.beginPath(); ctx.moveTo(cx-hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx,cy+hh2); ctx.lineTo(cx-hw,cy); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#0d0d0d';
+    ctx.beginPath(); ctx.moveTo(cx+hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx,cy+hh2); ctx.lineTo(cx+hw,cy); ctx.closePath(); ctx.fill();
+    // Barrel (long)
+    ctx.fillStyle = '#222'; ctx.fillRect(cx+hw-2, cy-bh*0.7, s*1.0, s*0.18);
+    // Drum mag
+    ctx.fillStyle = '#333';
+    ctx.beginPath(); ctx.arc(cx, cy, s*0.35, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#ff4400'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, s*0.35, 0, Math.PI*2); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,80,0,0.9)'; ctx.font = `bold ${CELL*0.14}px Courier New`;
+    ctx.textAlign = 'center'; ctx.fillText('DRACO🐉', cx, cy - bh - hh2 - 4);
+  } else if (p.kind === 'ammo') {
+    ctx.shadowColor = '#88ff88'; ctx.shadowBlur = 10;
+    // Ammo box — small crate
+    const hw = s*0.6, hh2 = s*0.25, bh = s*0.4;
+    ctx.fillStyle = '#3a6a2a';
+    ctx.beginPath(); ctx.moveTo(cx,cy-bh-hh2); ctx.lineTo(cx+hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx-hw,cy-bh); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#2a4a1a';
+    ctx.beginPath(); ctx.moveTo(cx-hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx,cy+hh2); ctx.lineTo(cx-hw,cy); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#1a3a0a';
+    ctx.beginPath(); ctx.moveTo(cx+hw,cy-bh); ctx.lineTo(cx,cy-bh+hh2); ctx.lineTo(cx,cy+hh2); ctx.lineTo(cx+hw,cy); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#88ff88'; ctx.lineWidth=1;
+    ctx.strokeRect(cx-4, cy-bh-4, 8, 8);
+    ctx.fillStyle='#88ff88'; ctx.font=`bold ${CELL*0.13}px Courier New`;
+    ctx.textAlign='center'; ctx.fillText('AMMO', cx, cy-bh-hh2-4);
+  }
 
   ctx.restore();
 }
