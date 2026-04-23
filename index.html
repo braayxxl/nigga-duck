@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>NiggaDuck — Cross to the Whip</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#1a0a2e;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  font-family:'Courier New', monospace;
+  overflow:hidden;
+}
+
+#ui {
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  background:rgba(15,5,30,0.92);
+  backdrop-filter:blur(8px);
+}
+#ui h1 {
+  font-size:48px;
+  font-weight:900;
+  background:linear-gradient(135deg,#fff700,#ff6b00,#ff006e);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:0.06em;
+  margin-bottom:8px;
+  text-shadow:none;
+  filter:drop-shadow(0 0 20px rgba(255,200,0,0.5));
+}
+#ui .sub {
+  color:#aaa;
+  font-size:13px;
+  margin-bottom:32px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+}
+#ui .instructions {
+  color:#ccc;
+  font-size:14px;
+  text-align:center;
+  line-height:2;
+  margin-bottom:32px;
+}
+#ui .instructions span { color:#fff700; font-weight:700; }
+#start-btn {
+  background:linear-gradient(135deg,#fff700,#ff9500);
+  color:#1a0a2e;
+  border:none;
+  padding:16px 48px;
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:0.1em;
+  border-radius:50px;
+  cursor:pointer;
+  text-transform:uppercase;
+  box-shadow:0 0 30px rgba(255,200,0,0.5);
+  transition:transform 0.1s;
+}
+#start-btn:hover{transform:scale(1.05);}
+#start-btn:active{transform:scale(0.97);}
+
+#game-over-ui {
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  background:rgba(15,5,30,0.92);
+  backdrop-filter:blur(8px);
+}
+#game-over-ui h2 {
+  font-size:52px;
+  font-weight:900;
+  color:#ff3366;
+  filter:drop-shadow(0 0 20px rgba(255,50,100,0.6));
+  margin-bottom:12px;
+  letter-spacing:0.06em;
+}
+#game-over-ui .score-display {
+  font-size:20px;
+  color:#fff;
+  margin-bottom:8px;
+}
+#game-over-ui .score-display span { color:#fff700; font-weight:700; }
+#game-over-ui .high-score {
+  font-size:14px;
+  color:#aaa;
+  margin-bottom:32px;
+  letter-spacing:0.08em;
+}
+
+#win-ui {
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  background:rgba(15,5,30,0.92);
+  backdrop-filter:blur(8px);
+}
+#win-ui h2 {
+  font-size:48px;
+  font-weight:900;
+  background:linear-gradient(135deg,#fff700,#00ffaa);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 20px rgba(0,255,170,0.5));
+  margin-bottom:12px;
+}
+#win-ui p {
+  color:#ccc;
+  font-size:16px;
+  margin-bottom:32px;
+}
+
+.retry-btn {
+  background:linear-gradient(135deg,#ff3366,#9900ff);
+  color:#fff;
+  border:none;
+  padding:14px 40px;
+  font-size:16px;
+  font-weight:900;
+  letter-spacing:0.1em;
+  border-radius:50px;
+  cursor:pointer;
+  text-transform:uppercase;
+  box-shadow:0 0 20px rgba(255,50,100,0.4);
+  transition:transform 0.1s;
+  margin-top:8px;
+}
+.retry-btn:hover{transform:scale(1.05);}
+
+canvas {
+  display:block;
+  border-radius:12px;
+  box-shadow:0 0 60px rgba(139,92,246,0.4), 0 0 120px rgba(0,212,255,0.1);
+}
+
+#hud {
+  position:fixed;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:32px;
+  align-items:center;
+  z-index:50;
+  pointer-events:none;
+}
+.hud-item {
+  background:rgba(0,0,0,0.6);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;
+  padding:6px 16px;
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:0.06em;
+}
+.hud-item span { color:#fff700; }
+.lives-hearts { letter-spacing:2px; }
+
+/* ===================== MOBILE D-PAD ===================== */
+#mobile-controls {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  padding: 12px 16px 20px;
+  background: linear-gradient(to top, rgba(10,5,20,0.92) 0%, rgba(10,5,20,0.0) 100%);
+  pointer-events: none;
+}
+#dpad-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  pointer-events: none;
+}
+#dpad {
+  display: grid;
+  grid-template-columns: 52px 52px 52px;
+  grid-template-rows: 52px 52px 52px;
+  gap: 4px;
+  pointer-events: none;
+}
+.dpad-btn {
+  width: 52px;
+  height: 52px;
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  pointer-events: all;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 0.08s, transform 0.08s;
+  backdrop-filter: blur(4px);
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.dpad-btn:active, .dpad-btn.pressed {
+  background: rgba(255,215,0,0.22);
+  border-color: rgba(255,215,0,0.6);
+  transform: scale(0.93);
+  color: #fff700;
+  box-shadow: 0 0 14px rgba(255,215,0,0.3);
+}
+.dpad-btn.center { background: transparent; border: none; box-shadow: none; pointer-events: none; }
+#right-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.action-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  pointer-events: all;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.08s;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  backdrop-filter: blur(6px);
+}
+.action-btn:active { transform: scale(0.9); }
+#shoot-btn {
+  background: radial-gradient(circle at 40% 35%, rgba(255,247,0,0.25), rgba(255,100,0,0.12));
+  border-color: rgba(255,200,0,0.4);
+  box-shadow: 0 0 18px rgba(255,200,0,0.2), 0 2px 16px rgba(0,0,0,0.5);
+}
+#shoot-btn:active {
+  background: radial-gradient(circle at 40% 35%, rgba(255,247,0,0.5), rgba(255,100,0,0.3));
+  box-shadow: 0 0 28px rgba(255,200,0,0.5);
+}
+#shop-btn-mobile {
+  background: radial-gradient(circle at 40% 35%, rgba(0,255,136,0.15), rgba(0,100,60,0.1));
+  border-color: rgba(0,255,136,0.35);
+  width: 52px;
+  height: 52px;
+  font-size: 18px;
+  box-shadow: 0 0 12px rgba(0,255,136,0.15), 0 2px 10px rgba(0,0,0,0.5);
+}
+#shop-btn-mobile:active {
+  background: radial-gradient(circle at 40% 35%, rgba(0,255,136,0.4), rgba(0,150,80,0.2));
+  box-shadow: 0 0 24px rgba(0,255,136,0.4);
+}
+@media (pointer: coarse), (max-width: 768px) {
+  #mobile-controls { display: block; }
+  #hud { gap: 10px; }
+  .hud-item { font-size: 11px; padding: 4px 10px; }
+  canvas { border-radius: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- MAIN MENU -->
+<div id="ui">
+  <h1>🦆 NIGGA DUCK</h1>
+  <div class="sub">Cross to the Whip</div>
+  <div class="instructions">
+    <span>↑ ↓ ← →</span> or <span>W A S D</span> to move<br>
+    Cross the road to reach the <span>🏎️ White Ferrari</span><br>
+    Dodge the <span style="color:#00ff88">🐸 Frog Bullets</span> or it's game over<br>
+    <span style="color:#ff6b6b">Don't get hit 3 times</span>
+  </div>
+  <button id="start-btn" onclick="startGame()">LETS GET IT 🤝</button>
+</div>
+
+<!-- GAME OVER -->
+<div id="game-over-ui">
+  <h2>💀 SMOKED</h2>
+  <div class="score-display">Score: <span id="final-score">0</span></div>
+  <div class="high-score" id="high-score-display"></div>
+  <button class="retry-btn" onclick="startGame()">Run It Back</button>
+</div>
+
+<!-- WIN -->
+<div id="win-ui">
+  <h2>🏆 DUCK RAG IS RICH</h2>
+  <p>Ferrari → Lambo → Bugatti. Duck Rag got the whole fleet. Respect.</p>
+  <div class="score-display" style="color:#fff700;font-size:18px;margin-bottom:8px;">Score: <span id="win-score">0</span></div>
+  <button class="retry-btn" style="background:linear-gradient(135deg,#fff700,#00ffaa);color:#1a0a2e;" onclick="startGame()">Play Again</button>
+</div>
+
+<!-- SHOP -->
+<div id="shop-ui" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;flex-direction:column;align-items:center;justify-content:center;z-index:200;background:rgba(10,5,20,0.95);backdrop-filter:blur(10px);">
+  <div style="font-size:32px;margin-bottom:4px;">🏪 STOP & SHOP</div>
+  <div style="color:#aaa;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;font-family:Courier New">The Block Store</div>
+  <div style="color:#fff700;font-size:20px;font-weight:700;font-family:Courier New;margin-bottom:20px;">Balance: <span id="shop-racks">$0</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:360px;width:100%;">
+    <div onclick="buyItem('gun1')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#fff700'" onmouseout="this.style.borderColor='#333'">
+      <div style="font-size:24px">🔫</div>
+      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Pistol</div>
+      <div style="color:#aaa;font-size:11px;font-family:Courier New">Shoot back at frogs</div>
+      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$200</div>
+    </div>
+    <div onclick="buyItem('gun2')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#ff4400'" onmouseout="this.style.borderColor='#333'">
+      <div style="font-size:24px">🔥</div>
+      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Uzi</div>
+      <div style="color:#aaa;font-size:11px;font-family:Courier New">Rapid fire upgrade</div>
+      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$500</div>
+    </div>
+    <div onclick="buyItem('armor')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#aaaaff'" onmouseout="this.style.borderColor='#333'">
+      <div style="font-size:24px">🛡️</div>
+      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Armor</div>
+      <div style="color:#aaa;font-size:11px;font-family:Courier New">+1 armor hit buffer</div>
+      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$300</div>
+    </div>
+    <div onclick="buyItem('rolex')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#ffd700'" onmouseout="this.style.borderColor='#333'">
+      <div style="font-size:24px">⌚</div>
+      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Rolex</div>
+      <div style="color:#aaa;font-size:11px;font-family:Courier New">Aura: 30% dodge chance</div>
+      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$800</div>
+    </div>
+    <div onclick="buyItem('life')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#ff6666'" onmouseout="this.style.borderColor='#333'">
+      <div style="font-size:24px">❤️</div>
+      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Extra Life</div>
+      <div style="color:#aaa;font-size:11px;font-family:Courier New">Buy another shot at it</div>
+      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$400</div>
+    </div>
+    <div onclick="buyItem('ammo')" style="background:#111;border:1px solid #333;border-radius:12px;padding:14px;cursor:pointer;text-align:center;transition:border 0.15s;" onmouseover="this.style.borderColor='#ffff00'" onmouseout="this.style.borderColor='#333'">
+      <div style="font-size:24px">🔋</div>
+      <div style="color:#fff;font-weight:700;font-family:Courier New;font-size:13px;margin:4px 0">Restock Ammo</div>
+      <div style="color:#aaa;font-size:11px;font-family:Courier New">Need gun first</div>
+      <div style="color:#fff700;font-weight:700;font-family:Courier New;margin-top:6px">$100</div>
+    </div>
+  </div>
+  <div id="shop-msg" style="color:#00ff88;font-family:Courier New;font-size:13px;margin-top:12px;min-height:20px;transition:opacity 0.5s;opacity:0;"></div>
+  <button onclick="closeShop()" style="margin-top:20px;background:linear-gradient(135deg,#333,#111);color:#aaa;border:1px solid #444;padding:10px 32px;border-radius:50px;font-family:Courier New;font-size:14px;cursor:pointer;letter-spacing:0.08em;">Leave Store [E]</button>
+</div>
+
+<!-- SHOP HINT -->
+<div id="shop-hint" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff700;font-family:Courier New;font-size:13px;padding:8px 20px;border-radius:20px;border:1px solid rgba(255,215,0,0.3);z-index:50;pointer-events:none;letter-spacing:0.06em;"></div>
+
+<!-- LEVEL CLEAR -->
+<div id="level-ui" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;flex-direction:column;align-items:center;justify-content:center;z-index:100;background:rgba(15,5,30,0.93);backdrop-filter:blur(8px);">
+  <div id="level-next-car" style="font-size:80px;margin-bottom:12px;filter:drop-shadow(0 0 30px gold);">🚗</div>
+  <h2 id="level-clear-title" style="font-family:Courier New,monospace;font-size:36px;font-weight:900;background:linear-gradient(135deg,#fff700,#00ffaa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;letter-spacing:0.06em;">SECURED</h2>
+  <div id="level-clear-sub" style="color:#fff;font-family:Courier New,monospace;font-size:16px;margin-bottom:6px;"></div>
+  <div id="level-next-desc" style="color:#aaa;font-family:Courier New,monospace;font-size:13px;margin-bottom:28px;letter-spacing:0.08em;text-transform:uppercase;"></div>
+  <button class="retry-btn" style="background:linear-gradient(135deg,#fff700,#ff9500);color:#1a0a2e;" onclick="startLevel()">RUN IT 🤝</button>
+</div>
+
+<!-- HUD -->
+<div id="hud" style="display:none;">
+  <div class="hud-item">Score: <span id="score-display">0</span></div>
+  <div class="hud-item lives-hearts" id="lives-display">❤️❤️❤️</div>
+  <div class="hud-item" id="racks-display" style="color:#00ff88;">💰$0</div>
+  <div class="hud-item" id="buffs-display" style="color:#ffd700;min-width:40px;"></div>
+  <div class="hud-item" id="level-display" style="color:#fff700;">Lvl 1</div>
+  <div class="hud-item">Best: <span id="best-display">0</span></div>
+</div>
+
+<!-- MOBILE D-PAD CONTROLS -->
+<div id="mobile-controls">
+  <div id="dpad-wrap">
+    <!-- D-Pad -->
+    <div id="dpad">
+      <div></div>
+      <div class="dpad-btn" id="btn-up"   ontouchstart="mobileMove('up',true);"   ontouchend="mobileMove('up',false);">↑</div>
+      <div></div>
+      <div class="dpad-btn" id="btn-left" ontouchstart="mobileMove('left',true);" ontouchend="mobileMove('left',false);">←</div>
+      <div class="dpad-btn center"></div>
+      <div class="dpad-btn" id="btn-right" ontouchstart="mobileMove('right',true);" ontouchend="mobileMove('right',false);">→</div>
+      <div></div>
+      <div class="dpad-btn" id="btn-down" ontouchstart="mobileMove('down',true);"  ontouchend="mobileMove('down',false);">↓</div>
+      <div></div>
+    </div>
+    <!-- Right action buttons -->
+    <div id="right-btns">
+      <div class="action-btn" id="shoot-btn"
+           ontouchstart="mobileFire();"
+           style="display:none;">🔫</div>
+      <div class="action-btn" id="shop-btn-mobile"
+           ontouchstart="mobileShop();"
+           style="display:none;">🏪</div>
+    </div>
+  </div>
+</div>
+
+<!-- Always-visible volume slider -->
+<div id="vol-bar" style="position:fixed;bottom:12px;right:16px;z-index:999;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:6px 14px;">
+  <span style="font-size:14px;">🔊</span>
+  <input id="vol-slider" type="range" min="0" max="1" step="0.01" value="0.3"
+    style="width:80px;accent-color:#fff700;cursor:pointer;"
+    oninput="setMasterVolume(this.value)">
+  <span id="vol-pct" style="color:#fff700;font-family:Courier New;font-size:11px;min-width:28px;">30%</span>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+// Grid dimensions
+const COLS = 11;
+const ROWS = 19;
+let CELL;
+let W, H;
+
+// =============================================
+// ISOMETRIC HELPERS
+// =============================================
+// Convert grid (col, row) to isometric screen (x, y)
+// Origin is top-center of the canvas
+function toIso(col, row) {
+  const tileW = CELL * 1.5;
+  const tileH = CELL * 0.75;
+  const x = (col - row) * (tileW / 2) + W / 2;
+  const y = (col + row) * (tileH / 2) + CELL * 1.5;
+  return { x, y };
+}
+
+// Draw an isometric diamond tile (top face)
+function isoTile(cx, cy, fillStyle, strokeStyle, alpha) {
+  const hw = CELL * 0.75; // half width
+  const hh = CELL * 0.375; // half height
+  ctx.save();
+  if (alpha !== undefined) ctx.globalAlpha = alpha;
+  ctx.beginPath();
+  ctx.moveTo(cx,      cy - hh);
+  ctx.lineTo(cx + hw, cy);
+  ctx.lineTo(cx,      cy + hh);
+  ctx.lineTo(cx - hw, cy);
+  ctx.closePath();
+  ctx.fillStyle = fillStyle;
+  ctx.fill();
+  if (strokeStyle) {
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// Draw left side face of a tile (going down)
+function isoSideLeft(cx, cy, height, fillStyle) {
+  const hw = CELL * 0.75;
+  const hh = CELL * 0.375;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(cx - hw, cy);
+  ctx.lineTo(cx,      cy + hh);
+  ctx.lineTo(cx,      cy + hh + height);
+  ctx.lineTo(cx - hw, cy + height);
+  ctx.closePath();
+  ctx.fillStyle = fillStyle;
+  ctx.fill();
+  ctx.restore();
+}
+
+// Draw right side face of a tile
+function isoSideRight(cx, cy, height, fillStyle) {
+  const hw = CELL * 0.75;
+  const hh = CELL * 0.375;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(cx + hw, cy);
+  ctx.lineTo(cx,      cy + hh);
+  ctx.lineTo(cx,      cy + hh + height);
+  ctx.lineTo(cx + hw, cy + height);
+  ctx.closePath();
+  ctx.fillStyle = fillStyle;
+  ctx.fill();
+  ctx.restore();
+}
+
+function resize() {
+  // Iso canvas needs to be wider+taller than flat grid
+  const isoW = (COLS + ROWS) * 30 + 60;
+  const isoH = (COLS + ROWS) * 16 + 120;
+  const maxW = window.innerWidth - 16;
+  const maxH = window.innerHeight - 80;
+  // Find CELL that fits
+  const cellByW = Math.floor(maxW / ((COLS + ROWS) * 0.75 + 1));
+  const cellByH = Math.floor(maxH / ((COLS + ROWS) * 0.4 + 4));
+  CELL = Math.max(20, Math.min(cellByW, cellByH, 38));
+  W = Math.ceil((COLS + ROWS) * CELL * 0.75 + CELL * 2);
+  H = Math.ceil((COLS + ROWS) * CELL * 0.375 + CELL * 5);
+  canvas.width = W;
+  canvas.height = H;
+}
+resize();
+window.addEventListener('resize', () => { resize(); if(gameRunning) drawAll(); });
+
+// =============================================
+// GAME STATE (unchanged)
+// =============================================
+let gameRunning = false;
+let score = 0;
+let highScore = 0;
+let lives = 3;
+let duck = { col: 4, row: ROWS - 1 };
+let bullets = [];
+let hoodBullets = [];
+let frogs = [];
+let cars = [];
+let frameCount = 0;
+let invincible = 0;
+let particles = [];
+let flashEffect = 0;
+let currentLevel = 1;
+let transitioning = false;
+let transitionTimer = 0;
+let transitionMsg = '';
+
+// Economy
+let racks = 0;
+let gun = 0;
+let armor = 0;
+let rolex = false;
+let maxLives = 3;
+
+// Shooting
+let ammo = 0;
+let duckBullets = [];
+let shootCD = 0;
+let enemyHP = {};
+
+// Shop state
+let inShop = false;
+let shopRow = -1;
+
+// Hood enemies
+let hoodEnemies = [];
+
+// =============================================
+// AUDIO SYSTEM (unchanged)
+// =============================================
+let masterVol = 0.3;
+let audioCtx = null;
+let bgGainNode = null;
+let bgPlaying = false;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function setMasterVolume(val) {
+  masterVol = parseFloat(val);
+  const pct = document.getElementById('vol-pct');
+  if (pct) pct.textContent = Math.round(masterVol * 100) + '%';
+  if (bgGainNode) bgGainNode.gain.value = masterVol * 0.25;
+}
+
+let bangBuffer = null;
+function loadBangBang() {
+  fetch('https://www.myinstants.com/media/sounds/chief-keef.mp3')
+    .then(r => r.arrayBuffer())
+    .then(buf => getAudioCtx().decodeAudioData(buf))
+    .then(decoded => { bangBuffer = decoded; })
+    .catch(() => {});
+}
+
+const activeBangSources = [];
+
+function playBangBang() {
+  if (!bangBuffer || !audioCtx) return;
+  if (masterVol === 0) return;
+  try {
+    const src = audioCtx.createBufferSource();
+    const gain = audioCtx.createGain();
+    src.buffer = bangBuffer;
+    gain.gain.value = masterVol * 0.7;
+    gain.gain.setValueAtTime(masterVol * 0.7, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+    src.connect(gain);
+    gain.connect(audioCtx.destination);
+    src.start(0);
+    src.stop(audioCtx.currentTime + 1.2);
+    activeBangSources.push({src, gain});
+    src.onended = () => {
+      const idx = activeBangSources.findIndex(s => s.src === src);
+      if (idx > -1) activeBangSources.splice(idx, 1);
+    };
+  } catch(e) {}
+}
+
+function stopAllBangSounds() {
+  activeBangSources.forEach(({src, gain}) => {
+    try {
+      gain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
+      src.stop(audioCtx.currentTime + 0.1);
+    } catch(e) {}
+  });
+  activeBangSources.length = 0;
+}
+
+function startBGMusic() {
+  if (bgPlaying) return;
+  bgPlaying = true;
+  const ctx2 = getAudioCtx();
+  bgGainNode = ctx2.createGain();
+  bgGainNode.gain.value = masterVol * 0.25;
+  bgGainNode.connect(ctx2.destination);
+
+  const melody = [
+    329.6, 392, 440, 523.3, 440, 392, 329.6, 0,
+    349.2, 440, 493.9, 587.3, 493.9, 440, 349.2, 0,
+    392, 493.9, 587.3, 659.3, 587.3, 493.9, 392, 0,
+    349.2, 392, 440, 523.3, 440, 392, 349.2, 329.6,
+  ];
+  const bassline = [
+    130.8, 0, 130.8, 0, 146.8, 0, 146.8, 0,
+    174.6, 0, 174.6, 0, 196, 0, 196, 0,
+    130.8, 0, 130.8, 0, 164.8, 0, 164.8, 0,
+    146.8, 0, 146.8, 0, 130.8, 0, 130.8, 0,
+  ];
+  const bpm = 128;
+  const step = 60 / bpm / 2;
+  let i = 0;
+
+  function playStep() {
+    if (!bgPlaying) return;
+    const now = ctx2.currentTime;
+    if (melody[i] > 0) {
+      const osc = ctx2.createOscillator();
+      const g = ctx2.createGain();
+      osc.type = 'square';
+      osc.frequency.value = melody[i];
+      g.gain.setValueAtTime(0.18, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + step * 0.7);
+      osc.connect(g); g.connect(bgGainNode);
+      osc.start(now); osc.stop(now + step * 0.7);
+    }
+    if (bassline[i] > 0) {
+      const b = ctx2.createOscillator();
+      const bg2 = ctx2.createGain();
+      b.type = 'sine';
+      b.frequency.value = bassline[i];
+      bg2.gain.setValueAtTime(0.3, now);
+      bg2.gain.exponentialRampToValueAtTime(0.001, now + step * 0.9);
+      b.connect(bg2); bg2.connect(bgGainNode);
+      b.start(now); b.stop(now + step * 0.9);
+    }
+    i = (i + 1) % melody.length;
+    setTimeout(playStep, step * 1000);
+  }
+  playStep();
+}
+
+function stopBGMusic() {
+  bgPlaying = false;
+  if (bgGainNode) {
+    bgGainNode.gain.setTargetAtTime(0, getAudioCtx().currentTime, 0.2);
+  }
+}
+
+const lamarClips = [
+  'https://www.myinstants.com/media/sounds/lamar-ng.mp3',
+  'https://www.myinstants.com/media/sounds/lamar-ni.mp3',
+  'https://www.myinstants.com/media/sounds/lamar-roasts-franklin-again.mp3',
+  'https://www.myinstants.com/media/sounds/lamar-doesnt-roast-franklin.mp3',
+  'https://www.myinstants.com/media/sounds/lamar-roast-ending.mp3',
+  'https://www.myinstants.com/media/sounds/lamar-dont-hate-because-im-beautiful_gGxHY9Y.mp3',
+];
+let lamarBuffers = [];
+let lastDuckLine = 0;
+let duckSpeakTimer = 180;
+let lamarLoaded = false;
+
+function loadLamarClips() {
+  if (lamarLoaded) return;
+  lamarLoaded = true;
+  const ac = getAudioCtx();
+  lamarClips.forEach((url, i) => {
+    fetch(url)
+      .then(r => r.arrayBuffer())
+      .then(buf => ac.decodeAudioData(buf))
+      .then(decoded => { lamarBuffers[i] = decoded; })
+      .catch(() => {});
+  });
+}
+
+let activeLamarSrc = null;
+function tryDuckSpeak() {
+  duckSpeakTimer--;
+  if (duckSpeakTimer > 0) return;
+  duckSpeakTimer = 300 + Math.floor(Math.random() * 350);
+  if (masterVol === 0 || !audioCtx) return;
+  const buf = lamarBuffers[lastDuckLine % lamarBuffers.length];
+  if (!buf) return;
+  try {
+    if (activeLamarSrc) { try { activeLamarSrc.stop(); } catch(e) {} }
+    const src = audioCtx.createBufferSource();
+    const gain = audioCtx.createGain();
+    src.buffer = buf;
+    gain.gain.value = masterVol * 0.9;
+    src.connect(gain); gain.connect(audioCtx.destination);
+    src.start(0);
+    activeLamarSrc = src;
+    lastDuckLine++;
+  } catch(e) {}
+}
+
+function stopDuckVoice() {
+  if (activeLamarSrc) {
+    try { activeLamarSrc.stop(); } catch(e) {}
+    activeLamarSrc = null;
+  }
+}
+
+let audioReady = false;
+function unlockAudio() {
+  if (audioReady) return;
+  audioReady = true;
+  getAudioCtx();
+  loadBangBang();
+  loadLamarClips();
+}
+document.addEventListener('click', unlockAudio, {once: true});
+document.addEventListener('keydown', unlockAudio, {once: true});
+document.addEventListener('touchstart', unlockAudio, {once: true});
+
+// =============================================
+// MONEY STACKS
+// =============================================
+let moneyStacks = [];
+
+// =============================================
+// LEVEL CONFIGS (unchanged)
+// =============================================
+const LEVELS = [
+  {
+    level: 1,
+    goalCar: 'White Ferrari',
+    goalEmoji: 'FERRARI',
+    goalColor: '#ffffff',
+    goalName: 'Ferrari',
+    bulletSpeed: 0.05,
+    frogShootDelay: [160, 200],
+    frogCount: 2,
+    trafficMult: 1.0,
+    description: 'Cross to the White Ferrari',
+  },
+  {
+    level: 2,
+    goalCar: 'Lamborghini',
+    goalEmoji: 'LAMBO',
+    goalColor: '#ffdd00',
+    goalName: 'Lambo',
+    bulletSpeed: 0.065,
+    frogShootDelay: [120, 160],
+    frogCount: 4,
+    trafficMult: 1.2,
+    description: 'Now chase the Lambo',
+  },
+  {
+    level: 3,
+    goalCar: 'Bugatti',
+    goalEmoji: 'BUGATTI',
+    goalColor: '#0066ff',
+    goalName: 'Bugatti',
+    bulletSpeed: 0.085,
+    frogShootDelay: [80, 120],
+    frogCount: 6,
+    trafficMult: 1.5,
+    description: 'Push to the Bugatti',
+  },
+];
+
+const GOAL_ROW = 0;
+const START_ROW = ROWS - 1;
+
+const ROAD_ROWS_TOP = [1, 2, 3, 4, 5];
+const SAFE_ROWS = [6, 7, 13, 14];
+const ROAD_ROWS_BOT = [8, 9, 10, 11, 12, 15, 16, 17];
+
+const laneConfigs = {
+  1:  { dir: 1,  speed: 0.018, color: '#cc3333', type: 'car' },
+  2:  { dir: -1, speed: 0.020, color: '#cc6600', type: 'truck' },
+  3:  { dir: 1,  speed: 0.015, color: '#cc3399', type: 'car' },
+  4:  { dir: -1, speed: 0.022, color: '#9900cc', type: 'car' },
+  5:  { dir: 1,  speed: 0.013, color: '#cc0000', type: 'truck' },
+  8:  { dir: -1, speed: 0.013, color: '#0066cc', type: 'car' },
+  9:  { dir: 1,  speed: 0.017, color: '#006633', type: 'truck' },
+  10: { dir: -1, speed: 0.015, color: '#cc6600', type: 'car' },
+  11: { dir: 1,  speed: 0.011, color: '#cc3333', type: 'car' },
+  12: { dir: -1, speed: 0.018, color: '#6600cc', type: 'car' },
+  15: { dir: 1,  speed: 0.009, color: '#cc4400', type: 'car' },
+  16: { dir: -1, speed: 0.011, color: '#0044cc', type: 'truck' },
+  17: { dir: 1,  speed: 0.008, color: '#aa3399', type: 'car' },
+};
+
+let vehicles = [];
+
+function initVehicles() {
+  vehicles = [];
+  const trafficMult = LEVELS[currentLevel - 1].trafficMult;
+  for (const [rowStr, cfg] of Object.entries(laneConfigs)) {
+    const row = parseInt(rowStr);
+    const count = cfg.type === 'truck' ? 1 : 2;
+    for (let i = 0; i < count; i++) {
+      vehicles.push({
+        row,
+        x: (i / count) * COLS + Math.random() * 1.5,
+        dir: cfg.dir,
+        speed: cfg.speed * trafficMult * (0.85 + Math.random() * 0.3),
+        color: cfg.color,
+        type: cfg.type,
+        width: cfg.type === 'truck' ? 2.4 : 1.6,
+      });
+    }
+  }
+}
+
+function initHoodEnemies() {
+  hoodEnemies = [];
+  if (currentLevel < 2) return;
+  const roadRows = [...ROAD_ROWS_TOP, ...ROAD_ROWS_BOT];
+  const count = currentLevel - 1;
+  const used = new Set();
+  for (let i = 0; i < count; i++) {
+    let row, col;
+    let tries = 0;
+    do {
+      row = roadRows[Math.floor(Math.random() * roadRows.length)];
+      col = Math.floor(Math.random() * COLS);
+      tries++;
+    } while (used.has(`${row}_${col}`) && tries < 20);
+    used.add(`${row}_${col}`);
+    hoodEnemies.push({
+      col, row,
+      shootTimer: 100 + Math.random() * 80,
+      phase: i,
+      shootDir: Math.random() < 0.5 ? 1 : -1,
+    });
+  }
+}
+
+function initMoneyStacks() {
+  moneyStacks = [];
+  const allRows = [...SAFE_ROWS, ...ROAD_ROWS_BOT.slice(0,3)];
+  for (const r of allRows) {
+    const stackCount = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < stackCount; i++) {
+      moneyStacks.push({
+        col: Math.floor(Math.random() * COLS),
+        row: r,
+        value: 100 + Math.floor(Math.random() * 3) * 50,
+        collected: false,
+        bob: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+}
+
+function initFrogs() {
+  frogs = [];
+  const lvl = LEVELS[currentLevel - 1];
+  const [minDelay, maxDelay] = lvl.frogShootDelay;
+  const count = lvl.frogCount;
+  const allPositions = [
+    { col: 1, row: 7 },
+    { col: 9, row: 6 },
+    { col: 0, row: 13 },
+    { col: 10, row: 14 },
+    { col: 5, row: 13 },
+    { col: 2, row: 6 },
+    { col: 8, row: 7 },
+    { col: 5, row: 6 },
+  ];
+  for (let i = 0; i < Math.min(count, allPositions.length); i++) {
+    const pos = allPositions[i];
+    frogs.push({
+      col: pos.col,
+      row: pos.row,
+      shootTimer: minDelay + Math.random() * (maxDelay - minDelay),
+      phase: i,
+    });
+  }
+}
+
+// =============================================
+// GAME FLOW
+// =============================================
+function startGame() {
+  document.getElementById('ui').style.display = 'none';
+  document.getElementById('game-over-ui').style.display = 'none';
+  document.getElementById('win-ui').style.display = 'none';
+  document.getElementById('level-ui').style.display = 'none';
+  document.getElementById('hud').style.display = 'flex';
+
+  score = 0; lives = 3; maxLives = 3; currentLevel = 1;
+  racks = 0; gun = 0; armor = 0; rolex = false;
+  ammo = 0; duckBullets = []; enemyHP = {}; shootCD = 0;
+  inShop = false;
+  duck = { col: 5, row: START_ROW };
+  bullets = []; hoodBullets = []; particles = [];
+  flashEffect = 0; invincible = 0; frameCount = 0;
+  transitioning = false; gameRunning = true;
+
+  initVehicles(); initFrogs(); initHoodEnemies(); initMoneyStacks();
+  updateHUD();
+  stopAllBangSounds(); stopDuckVoice(); startBGMusic();
+  requestAnimationFrame(gameLoop);
+}
+
+function startLevel() {
+  document.getElementById('level-ui').style.display = 'none';
+  document.getElementById('hud').style.display = 'flex';
+  inShop = false; duckBullets = []; enemyHP = {}; shootCD = 0;
+  duck = { col: 5, row: START_ROW };
+  bullets = []; hoodBullets = []; particles = [];
+  flashEffect = 0; invincible = 0; frameCount = 0;
+  transitioning = false; gameRunning = true;
+  initVehicles(); initFrogs(); initHoodEnemies(); initMoneyStacks();
+  updateHUD(); startBGMusic();
+  requestAnimationFrame(gameLoop);
+}
+
+function updateHUD() {
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('best-display').textContent = highScore;
+  document.getElementById('lives-display').textContent = 'H'.repeat(lives) + 'A'.repeat(armor) + '_'.repeat(Math.max(0, 3 - lives));
+  const lvl = LEVELS[currentLevel - 1];
+  document.getElementById('level-display').textContent = 'Lvl ' + currentLevel + ' - ' + lvl.goalName;
+  const racksEl = document.getElementById('racks-display');
+  if (racksEl) racksEl.textContent = 'Racks: $' + racks;
+  const buffsEl = document.getElementById('buffs-display');
+  if (buffsEl) {
+    let buffs = '';
+    if (rolex) buffs += '[ROLEX] ';
+    if (gun === 1) buffs += '[GUN]x' + ammo + ' ';
+    if (gun === 2) buffs += '[UZI]x' + ammo + ' ';
+    buffsEl.textContent = buffs;
+  }
+}
+
+// =============================================
+// INPUT (unchanged)
+// =============================================
+const keys = {};
+let moveCD = 0;
+document.addEventListener('keydown', e => {
+  if (!gameRunning) return;
+  if (moveCD > 0) return;
+  let moved = false;
+  if (e.key === 'ArrowUp'    || e.key === 'w' || e.key === 'W') { duck.row = Math.max(0, duck.row - 1); moved = true; }
+  if (e.key === 'ArrowDown'  || e.key === 's' || e.key === 'S') { duck.row = Math.min(START_ROW, duck.row + 1); moved = true; }
+  if (e.key === 'ArrowLeft'  || e.key === 'a' || e.key === 'A') { duck.col = Math.max(0, duck.col - 1); moved = true; }
+  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { duck.col = Math.min(COLS - 1, duck.col + 1); moved = true; }
+  if (moved) {
+    moveCD = 8;
+    if (duck.row === GOAL_ROW) winGame();
+    const prevRow = duck.row + 1;
+    if (duck.row < prevRow) { score += 10; updateHUD(); }
+    e.preventDefault();
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'e' || e.key === 'E') {
+    if (gameRunning && SAFE_ROWS.includes(duck.row)) openShop();
+  }
+  if (e.key === ' ' && gameRunning && gun > 0 && ammo > 0 && shootCD <= 0) {
+    e.preventDefault();
+    fireDuckBullet();
+  }
+});
+
+function fireDuckBullet() {
+  if (ammo <= 0 || gun === 0) return;
+  ammo--;
+  const spreadAngles = gun === 2 ? [-0.3, 0, 0.3] : [0];
+  for (const angle of spreadAngles) {
+    duckBullets.push({
+      x: duck.col + 0.5,
+      y: duck.row + 0.5,
+      vx: Math.sin(angle) * 0.12,
+      vy: -0.12,
+      life: 160,
+    });
+  }
+  shootCD = gun === 2 ? 8 : 18;
+  updateHUD();
+}
+
+function openShop() {
+  gameRunning = false; inShop = true;
+  document.getElementById('shop-hint').style.display = 'none';
+  document.getElementById('shop-racks').textContent = `$${racks}`;
+  document.getElementById('shop-ui').style.display = 'flex';
+}
+
+function buyItem(item) {
+  if (item === 'gun1' && racks >= 200 && gun < 1) {
+    racks -= 200; gun = 1; ammo += 6; updateHUD(); showShopMsg('Pistol equipped. 6 shots loaded.');
+  } else if (item === 'gun2' && racks >= 500 && gun >= 1) {
+    racks -= 500; gun = 2; ammo += 12; updateHUD(); showShopMsg('Uzi equipped. 12 shots loaded.');
+  } else if (item === 'gun2' && racks >= 500 && gun < 1) {
+    racks -= 500; gun = 2; ammo += 12; updateHUD(); showShopMsg('Uzi equipped. 12 shots loaded.');
+  } else if (item === 'ammo' && racks >= 100 && gun > 0) {
+    racks -= 100; ammo += (gun === 2 ? 8 : 5); updateHUD(); showShopMsg('Ammo restocked.');
+  } else if (item === 'armor' && racks >= 300) {
+    racks -= 300; armor = Math.min(armor+1,3); updateHUD(); showShopMsg('Armor equipped.');
+  } else if (item === 'rolex' && racks >= 800 && !rolex) {
+    racks -= 800; rolex = true; updateHUD(); showShopMsg('Rolex on. Aura activated.');
+  } else if (item === 'life' && racks >= 400) {
+    racks -= 400; lives = Math.min(lives+1,5); updateHUD(); showShopMsg('+1 life. Dont waste it.');
+  } else {
+    showShopMsg('Not enough racks or already equipped.');
+  }
+  document.getElementById('shop-racks').textContent = `$${racks}`;
+}
+
+function showShopMsg(msg) {
+  const el = document.getElementById('shop-msg');
+  if (el) { el.textContent = msg; el.style.opacity = '1'; setTimeout(() => el.style.opacity='0', 2000); }
+}
+
+function closeShop() {
+  document.getElementById('shop-ui').style.display = 'none';
+  inShop = false; gameRunning = true;
+  requestAnimationFrame(gameLoop);
+}
+
+// =============================================
+// MOBILE CONTROLS
+// =============================================
+let mobileMoveRepeat = {};
+let mobileMoveTimers = {};
+
+function mobileMove(dir, down) {
+  if (down) {
+    if (!gameRunning) return;
+    unlockAudio();
+    doMobileMove(dir);
+    // Hold-to-repeat after 200ms, then every 150ms
+    mobileMoveTimers[dir] = setTimeout(() => {
+      mobileMoveRepeat[dir] = setInterval(() => {
+        if (gameRunning) doMobileMove(dir);
+      }, 150);
+    }, 200);
+    const btn = document.getElementById('btn-'+dir);
+    if (btn) btn.classList.add('pressed');
+  } else {
+    clearTimeout(mobileMoveTimers[dir]);
+    clearInterval(mobileMoveRepeat[dir]);
+    const btn = document.getElementById('btn-'+dir);
+    if (btn) btn.classList.remove('pressed');
+  }
+}
+
+function doMobileMove(dir) {
+  if (!gameRunning || moveCD > 0) return;
+  if (dir === 'up')    { duck.row = Math.max(0, duck.row - 1); score += 10; }
+  if (dir === 'down')  { duck.row = Math.min(START_ROW, duck.row + 1); }
+  if (dir === 'left')  { duck.col = Math.max(0, duck.col - 1); }
+  if (dir === 'right') { duck.col = Math.min(COLS-1, duck.col + 1); }
+  moveCD = 8;
+  if (duck.row === GOAL_ROW) winGame();
+  updateHUD();
+  updateMobileButtons();
+}
+
+function mobileFire() {
+  if (!gameRunning || gun === 0 || ammo <= 0 || shootCD > 0) return;
+  unlockAudio();
+  fireDuckBullet();
+}
+
+function mobileShop() {
+  if (!gameRunning) return;
+  unlockAudio();
+  if (SAFE_ROWS.includes(duck.row)) openShop();
+}
+
+function updateMobileButtons() {
+  const shootEl = document.getElementById('shoot-btn');
+  const shopEl  = document.getElementById('shop-btn-mobile');
+  if (shootEl) shootEl.style.display = (gun > 0) ? 'flex' : 'none';
+  if (shopEl)  shopEl.style.display  = (SAFE_ROWS.includes(duck.row)) ? 'flex' : 'none';
+}
+
+// Canvas swipe fallback (for devices where D-pad is hidden)
+let touchStart = null;
+canvas.addEventListener('touchstart', e => {
+  touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  e.preventDefault();
+}, { passive: false });
+canvas.addEventListener('touchend', e => {
+  if (!touchStart || !gameRunning) return;
+  const dx = e.changedTouches[0].clientX - touchStart.x;
+  const dy = e.changedTouches[0].clientY - touchStart.y;
+  // Only trigger swipe if it didn't land on the D-pad area
+  if (Math.abs(dx) < 10 && Math.abs(dy) < 10) { touchStart = null; return; }
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 18) doMobileMove('right');
+    else if (dx < -18) doMobileMove('left');
+  } else {
+    if (dy < -18) doMobileMove('up');
+    else if (dy > 18) doMobileMove('down');
+  }
+  touchStart = null;
+  e.preventDefault();
+}, { passive: false });
+
+// Prevent default touch scroll during gameplay
+document.addEventListener('touchmove', e => { if (gameRunning) e.preventDefault(); }, { passive: false });
+
+// =============================================
+// GAME LOOP (unchanged logic)
+// =============================================
+function gameLoop() {
+  if (!gameRunning) return;
+  frameCount++;
+  if (moveCD > 0) moveCD--;
+  if (invincible > 0) invincible--;
+  if (flashEffect > 0) flashEffect--;
+
+  for (const v of vehicles) {
+    v.x += v.speed * v.dir;
+    if (v.dir === 1 && v.x > COLS + 1) v.x = -v.width - 0.5;
+    if (v.dir === -1 && v.x < -v.width - 1) v.x = COLS + 0.5;
+  }
+
+  for (const frog of frogs) {
+    frog.shootTimer--;
+    if (frog.shootTimer <= 0) {
+      const lvlCfg = LEVELS[currentLevel - 1];
+      frog.shootTimer = lvlCfg.frogShootDelay[0] + Math.random() * (lvlCfg.frogShootDelay[1] - lvlCfg.frogShootDelay[0]);
+      const dx = duck.col - frog.col;
+      const dy = duck.row - frog.row;
+      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      const bspeed = LEVELS[currentLevel - 1].bulletSpeed;
+      bullets.push({ x: frog.col + 0.5, y: frog.row + 0.5, vx: (dx/dist)*bspeed, vy: (dy/dist)*bspeed, life: 140 });
+    }
+  }
+
+  if (shootCD > 0) shootCD--;
+  tryDuckSpeak();
+
+  for (let i = duckBullets.length - 1; i >= 0; i--) {
+    const db = duckBullets[i];
+    db.x += db.vx; db.y += db.vy; db.life--;
+    if (db.life <= 0 || db.y < -1) { duckBullets.splice(i, 1); continue; }
+    let hit = false;
+    for (let j = frogs.length - 1; j >= 0; j--) {
+      const f = frogs[j];
+      if (Math.abs(db.x - (f.col+0.5)) < 0.7 && Math.abs(db.y - (f.row+0.5)) < 0.7) {
+        const key = `f_${f.col}_${f.row}`;
+        if (!enemyHP[key]) enemyHP[key] = 3;
+        enemyHP[key]--;
+        spawnParticles(f.col+0.5, f.row+0.5, '#00ff88');
+        if (enemyHP[key] <= 0) {
+          spawnParticles(f.col+0.5, f.row+0.5, '#ffdd00');
+          frogs.splice(j, 1); score += 50; updateHUD();
+        }
+        duckBullets.splice(i, 1); hit = true; break;
+      }
+    }
+    if (hit) continue;
+    for (let j = hoodEnemies.length - 1; j >= 0; j--) {
+      const he = hoodEnemies[j];
+      if (Math.abs(db.x - (he.col+0.5)) < 0.7 && Math.abs(db.y - (he.row+0.5)) < 0.7) {
+        const key = `h_${he.col}_${he.row}`;
+        if (!enemyHP[key]) enemyHP[key] = 3;
+        enemyHP[key]--;
+        spawnParticles(he.col+0.5, he.row+0.5, '#ff8800');
+        if (enemyHP[key] <= 0) {
+          spawnParticles(he.col+0.5, he.row+0.5, '#ffd700');
+          hoodEnemies.splice(j, 1); score += 75; updateHUD();
+        }
+        duckBullets.splice(i, 1); break;
+      }
+    }
+  }
+
+  for (const he of hoodEnemies) {
+    he.shootTimer--;
+    if (he.shootTimer <= 0) {
+      he.shootTimer = 160 + Math.random() * 100;
+      playBangBang();
+      hoodBullets.push({ x: he.col+0.5, y: he.row+0.5, vx: 0.1,  vy: 0, life: 100, type:'hood' });
+      hoodBullets.push({ x: he.col+0.5, y: he.row+0.5, vx: -0.1, vy: 0, life: 100, type:'hood' });
+      const dx = duck.col - he.col, dy2 = duck.row - he.row;
+      const dist = Math.sqrt(dx*dx+dy2*dy2)||1;
+      const spd = LEVELS[currentLevel-1].bulletSpeed * 0.8;
+      hoodBullets.push({ x: he.col+0.5, y: he.row+0.5, vx:(dx/dist)*spd, vy:(dy2/dist)*spd, life:130, type:'hood' });
+    }
+  }
+
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    bullets[i].x += bullets[i].vx; bullets[i].y += bullets[i].vy; bullets[i].life--;
+    if (bullets[i].life <= 0 || bullets[i].x < -1 || bullets[i].x > COLS+1 || bullets[i].y < -1 || bullets[i].y > ROWS+1) bullets.splice(i, 1);
+  }
+  for (let i = hoodBullets.length - 1; i >= 0; i--) {
+    hoodBullets[i].x += hoodBullets[i].vx; hoodBullets[i].y += hoodBullets[i].vy; hoodBullets[i].life--;
+    if (hoodBullets[i].life <= 0 || hoodBullets[i].x < -1 || hoodBullets[i].x > COLS+1) hoodBullets.splice(i, 1);
+  }
+
+  for (const m of moneyStacks) {
+    if (!m.collected && m.col === duck.col && m.row === duck.row) {
+      m.collected = true; racks += m.value; score += m.value;
+      spawnParticles(duck.col+0.5, duck.row+0.5, '#00ff88'); updateHUD();
+    }
+  }
+
+  if (SAFE_ROWS.includes(duck.row) && !inShop) {
+    document.getElementById('shop-hint').style.display = 'block';
+    document.getElementById('shop-hint').textContent = '[E] Shop — $' + racks;
+  } else {
+    document.getElementById('shop-hint').style.display = 'none';
+  }
+  updateMobileButtons();
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy; p.life--;
+    p.vy += 0.02;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+
+  if (invincible === 0) {
+    for (let i = bullets.length - 1; i >= 0; i--) {
+      const b = bullets[i];
+      if (Math.abs(b.x - 0.5 - duck.col) < 0.7 && Math.abs(b.y - 0.5 - duck.row) < 0.7) {
+        bullets.splice(i, 1); takeDamage('bullet'); break;
+      }
+    }
+    for (let i = hoodBullets.length - 1; i >= 0; i--) {
+      const b = hoodBullets[i];
+      if (Math.abs(b.x - 0.5 - duck.col) < 0.65 && Math.abs(b.y - 0.5 - duck.row) < 0.65) {
+        hoodBullets.splice(i, 1); takeDamage('hood'); break;
+      }
+    }
+    for (const v of vehicles) {
+      if (v.row === duck.row) {
+        const vLeft = v.x, vRight = v.x + v.width;
+        const dLeft = duck.col + 0.1, dRight = duck.col + 0.9;
+        if (dRight > vLeft && dLeft < vRight) { takeDamage('car'); break; }
+      }
+    }
+  }
+
+  drawAll();
+  requestAnimationFrame(gameLoop);
+}
+
+function takeDamage(type) {
+  if (invincible > 0) return;
+  if (rolex && Math.random() < 0.3) {
+    invincible = 40; spawnParticlesGrid(duck.col+0.5, duck.row+0.5, '#ffd700'); return;
+  }
+  if (armor > 0) {
+    armor--; invincible = 60; flashEffect = 10;
+    spawnParticlesGrid(duck.col+0.5, duck.row+0.5, '#aaaaff'); updateHUD(); return;
+  }
+  lives--; invincible = 90; flashEffect = 20;
+  const colors = { bullet:'#00ff88', hood:'#ff9900', car:'#ff4444' };
+  spawnParticlesGrid(duck.col + 0.5, duck.row + 0.5, colors[type]||'#ff4444');
+  score = Math.max(0, score - 20); updateHUD();
+  if (lives <= 0) { setTimeout(gameOver, 300); gameRunning = false; }
+}
+
+// Spawn particles in iso screen coords
+function spawnParticles(gx, gy, color) {
+  const iso = toIso(gx - 0.5, gy - 0.5);
+  for (let i = 0; i < 12; i++) {
+    const angle = (i / 12) * Math.PI * 2;
+    particles.push({
+      x: iso.x, y: iso.y,
+      vx: Math.cos(angle) * (2 + Math.random() * 3),
+      vy: Math.sin(angle) * (2 + Math.random() * 3),
+      color,
+      life: 30 + Math.random() * 20,
+    });
+  }
+}
+
+function spawnParticlesGrid(gx, gy, color) {
+  spawnParticles(gx, gy, color);
+}
+
+function gameOver() {
+  gameRunning = false; stopBGMusic(); stopAllBangSounds(); stopDuckVoice();
+  if (score > highScore) highScore = score;
+  document.getElementById('hud').style.display = 'none';
+  document.getElementById('final-score').textContent = score;
+  document.getElementById('high-score-display').textContent = score >= highScore ? 'NEW HIGH SCORE!' : 'Best: ' + highScore;
+  document.getElementById('game-over-ui').style.display = 'flex';
+}
+
+function winGame() {
+  gameRunning = false; stopBGMusic(); stopAllBangSounds(); stopDuckVoice();
+  score += 100 * currentLevel;
+  if (score > highScore) highScore = score;
+  document.getElementById('hud').style.display = 'none';
+  if (currentLevel < LEVELS.length) {
+    const nextLvl = LEVELS[currentLevel];
+    document.getElementById('level-clear-title').textContent = LEVELS[currentLevel-1].goalName.toUpperCase() + ' SECURED';
+    document.getElementById('level-clear-sub').textContent = `Score: ${score}`;
+    document.getElementById('level-next-desc').textContent = `Next up: ${nextLvl.description}`;
+    document.getElementById('level-next-car').textContent = nextLvl.goalEmoji;
+    document.getElementById('level-ui').style.display = 'flex';
+    currentLevel++;
+  } else {
+    document.getElementById('win-score').textContent = score;
+    document.getElementById('win-ui').style.display = 'flex';
+  }
+}
+
+// =============================================
+// ISOMETRIC DRAWING SYSTEM
+// =============================================
+
+function getTileColor(row) {
+  if (row === GOAL_ROW) return { top: '#1a3a0a', side: '#0e2306', glow: '#ffd700' };
+  if (ROAD_ROWS_TOP.includes(row)) {
+    return row % 2 === 0
+      ? { top: '#1e1e32', side: '#12122a' }
+      : { top: '#191929', side: '#0f0f20' };
+  }
+  if (SAFE_ROWS.includes(row)) return { top: '#1a3a1a', side: '#0d2610', elevated: true };
+  if (ROAD_ROWS_BOT.includes(row)) {
+    return row % 2 === 0
+      ? { top: '#1e1e32', side: '#12122a' }
+      : { top: '#191929', side: '#0f0f20' };
+  }
+  if (row === START_ROW) return { top: '#1e2e1e', side: '#141e14' };
+  return { top: '#1a1a2e', side: '#111122' };
+}
+
+function drawIsoGrid() {
+  // Draw back-to-front: row 0 first (back), row ROWS-1 last (front)
+  // Within each row, col 0 to COLS-1
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      drawIsoTile(c, r);
+    }
+  }
+}
+
+function drawIsoTile(col, row) {
+  const iso = toIso(col, row);
+  const cx = iso.x, cy = iso.y;
+  const tc = getTileColor(row);
+  const sideH = tc.elevated ? CELL * 0.22 : CELL * 0.08;
+
+  // Side faces (drawn first, behind top)
+  isoSideLeft(cx, cy, sideH, tc.side || darkenHex(tc.top, 0.6));
+  isoSideRight(cx, cy, sideH, darkenHex(tc.top, 0.75));
+
+  // Top face
+  if (row === GOAL_ROW) {
+    // Gold glowing goal tile
+    const pulse = 0.7 + 0.3 * Math.abs(Math.sin(frameCount * 0.05 + col * 0.3));
+    ctx.save();
+    ctx.shadowColor = '#ffd700';
+    ctx.shadowBlur = 14 * pulse;
+    isoTile(cx, cy, tc.top, 'rgba(255,215,0,0.5)');
+    // Gold sparkles
+    ctx.fillStyle = `rgba(255,215,0,${0.3 * pulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy - CELL * 0.1, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  } else if (SAFE_ROWS.includes(row)) {
+    // Grass tile with slight green glow
+    ctx.save();
+    ctx.shadowColor = '#00aa44';
+    ctx.shadowBlur = 4;
+    isoTile(cx, cy, tc.top, 'rgba(60,160,60,0.2)');
+    ctx.restore();
+    // Small grass tufts
+    if ((col + row) % 3 === 0) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(80,200,80,0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx - 4, cy); ctx.lineTo(cx - 6, cy - 6);
+      ctx.moveTo(cx,     cy); ctx.lineTo(cx,     cy - 7);
+      ctx.moveTo(cx + 4, cy); ctx.lineTo(cx + 5, cy - 5);
+      ctx.stroke();
+      ctx.restore();
+    }
+  } else if (ROAD_ROWS_TOP.includes(row) || ROAD_ROWS_BOT.includes(row)) {
+    isoTile(cx, cy, tc.top, 'rgba(80,80,100,0.12)');
+    // Lane dashes along the row direction
+    const cfg = laneConfigs[row];
+    if (cfg && col % 2 === 0) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 5]);
+      // Dash runs along iso row direction (left to right in iso space)
+      const isoL = toIso(col, row);
+      const isoR = toIso(col + 1, row);
+      ctx.beginPath();
+      ctx.moveTo(isoL.x, isoL.y);
+      ctx.lineTo(isoR.x, isoR.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+  } else {
+    isoTile(cx, cy, tc.top, 'rgba(80,100,80,0.1)');
+  }
+}
+
+function drawAll() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#1a0a2e');
+  bg.addColorStop(1, '#0d0518');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Flash effect on hit
+  if (flashEffect > 0) {
+    ctx.fillStyle = `rgba(255,50,50,${flashEffect/20 * 0.25})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Draw grid tiles (back to front)
+  drawIsoGrid();
+
+  // Collect all drawables and sort by iso depth (col + row, smaller = further back)
+  const drawables = [];
+
+  // Money stacks
+  for (const m of moneyStacks) {
+    if (!m.collected) drawables.push({ depth: m.col + m.row + 0.1, type: 'money', data: m });
+  }
+
+  // Vehicles
+  for (const v of vehicles) {
+    drawables.push({ depth: v.x + v.row + 0.2, type: 'vehicle', data: v });
+  }
+
+  // Frogs
+  for (const frog of frogs) {
+    drawables.push({ depth: frog.col + frog.row + 0.4, type: 'frog', data: frog });
+  }
+
+  // Hood enemies
+  for (const he of hoodEnemies) {
+    drawables.push({ depth: he.col + he.row + 0.4, type: 'hood', data: he });
+  }
+
+  // Duck
+  drawables.push({ depth: duck.col + duck.row + 0.5, type: 'duck', data: duck });
+
+  // Sort by depth
+  drawables.sort((a, b) => a.depth - b.depth);
+
+  // Draw sorted entities
+  for (const d of drawables) {
+    if (d.type === 'money')   drawIsoMoney(d.data);
+    if (d.type === 'vehicle') drawIsoVehicle(d.data);
+    if (d.type === 'frog')    drawIsoFrog(d.data);
+    if (d.type === 'hood')    drawIsoHoodEnemy(d.data);
+    if (d.type === 'duck')    drawIsoDuck();
+  }
+
+  // Goal car on row 0 (always at front of row 0)
+  drawIsoGoalCar();
+
+  // Bullets (always on top)
+  for (const b of duckBullets) {
+    const iso = toIso(b.x, b.y);
+    ctx.save();
+    ctx.shadowColor = '#fff700'; ctx.shadowBlur = 10;
+    ctx.strokeStyle = 'rgba(255,220,0,0.5)';
+    ctx.lineWidth = 2;
+    const isoTail = toIso(b.x - b.vx * 4, b.y - b.vy * 4);
+    ctx.beginPath(); ctx.moveTo(iso.x, iso.y); ctx.lineTo(isoTail.x, isoTail.y); ctx.stroke();
+    ctx.fillStyle = '#fff700';
+    ctx.beginPath(); ctx.arc(iso.x, iso.y, 4, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  for (const b of bullets) {
+    const iso = toIso(b.x, b.y);
+    ctx.save();
+    ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 8;
+    const isoTail = toIso(b.x - b.vx * 3, b.y - b.vy * 3);
+    ctx.strokeStyle = 'rgba(0,255,136,0.4)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(iso.x, iso.y); ctx.lineTo(isoTail.x, isoTail.y); ctx.stroke();
+    ctx.fillStyle = '#00ff88';
+    ctx.beginPath(); ctx.arc(iso.x, iso.y, 4, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  for (const b of hoodBullets) {
+    const iso = toIso(b.x, b.y);
+    ctx.save();
+    ctx.shadowColor = '#ff8800'; ctx.shadowBlur = 8;
+    const isoTail = toIso(b.x - b.vx * 3, b.y - b.vy * 3);
+    ctx.strokeStyle = 'rgba(255,140,0,0.5)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(iso.x, iso.y); ctx.lineTo(isoTail.x, isoTail.y); ctx.stroke();
+    ctx.fillStyle = '#ff8800';
+    ctx.beginPath(); ctx.arc(iso.x, iso.y, 3.5, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  // Particles
+  for (const p of particles) {
+    ctx.globalAlpha = p.life / 50;
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  // Vignette
+  const vig = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.85);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.5)');
+  ctx.fillStyle = vig;
+  ctx.fillRect(0, 0, W, H);
+}
+
+// =============================================
+// ISO ENTITY DRAWING
+// =============================================
+
+function drawIsoVehicle(v) {
+  const iso = toIso(v.x + v.width / 2, v.row);
+  const cx = iso.x, cy = iso.y;
+  const vw = v.width * CELL * 0.75; // projected width along iso row
+  const vh = CELL * 0.6;   // visual height of box
+  const vd = CELL * 0.28;  // depth (side face)
+
+  ctx.save();
+  ctx.shadowColor = v.color;
+  ctx.shadowBlur = 8;
+
+  // Top face (diamond shape, stretched along row direction)
+  const hw = vw * 0.5;
+  const hh = CELL * 0.375 * 0.65;
+
+  // Top face
+  ctx.fillStyle = lightenHex(v.color, 0.35);
+  ctx.beginPath();
+  ctx.moveTo(cx,      cy - vh - hh);
+  ctx.lineTo(cx + hw, cy - vh);
+  ctx.lineTo(cx,      cy - vh + hh);
+  ctx.lineTo(cx - hw, cy - vh);
+  ctx.closePath();
+  ctx.fill();
+
+  // Left side face
+  ctx.fillStyle = v.color;
+  ctx.beginPath();
+  ctx.moveTo(cx - hw, cy - vh);
+  ctx.lineTo(cx,      cy - vh + hh);
+  ctx.lineTo(cx,      cy + hh);
+  ctx.lineTo(cx - hw, cy);
+  ctx.closePath();
+  ctx.fill();
+
+  // Right side face
+  ctx.fillStyle = darkenHex(v.color, 0.55);
+  ctx.beginPath();
+  ctx.moveTo(cx + hw, cy - vh);
+  ctx.lineTo(cx,      cy - vh + hh);
+  ctx.lineTo(cx,      cy + hh);
+  ctx.lineTo(cx + hw, cy);
+  ctx.closePath();
+  ctx.fill();
+
+  // Window stripe on top face
+  ctx.fillStyle = 'rgba(130,210,255,0.35)';
+  ctx.beginPath();
+  const winW = hw * 0.45;
+  ctx.moveTo(cx - winW * 0.4, cy - vh - hh * 0.5);
+  ctx.lineTo(cx + winW * 0.4, cy - vh - hh * 0.5);
+  ctx.lineTo(cx + winW * 0.1, cy - vh + hh * 0.2);
+  ctx.lineTo(cx - winW * 0.1, cy - vh + hh * 0.2);
+  ctx.closePath();
+  ctx.fill();
+
+  // Headlights glow
+  ctx.shadowColor = '#ffffaa';
+  ctx.shadowBlur = 12;
+  ctx.fillStyle = '#ffffaa';
+  const lightX = v.dir === 1 ? cx + hw - 3 : cx - hw + 3;
+  ctx.fillRect(lightX - 2, cy - vh * 0.4, 4, vh * 0.2);
+
+  ctx.restore();
+}
+
+function drawIsoFrog(frog) {
+  const bob = Math.sin(frameCount * 0.06 + frog.col * 1.3) * 2;
+  const iso = toIso(frog.col + 0.5, frog.row + 0.5);
+  const cx = iso.x, cy = iso.y - CELL * 0.25 - bob;
+  const r = CELL * 0.22;
+
+  ctx.save();
+  ctx.shadowColor = '#00ff88';
+  ctx.shadowBlur = 10;
+
+  // Shadow on tile
+  ctx.globalAlpha = 0.3;
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.ellipse(iso.x, iso.y, r * 0.8, r * 0.3, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Body box (iso style)
+  const bh = r * 1.2;
+  const bw = r * 0.9;
+  const hh2 = CELL * 0.375 * 0.5;
+
+  // Top
+  ctx.fillStyle = '#22aa55';
+  ctx.beginPath();
+  ctx.moveTo(cx,      cy - bh - hh2);
+  ctx.lineTo(cx + bw, cy - bh);
+  ctx.lineTo(cx,      cy - bh + hh2);
+  ctx.lineTo(cx - bw, cy - bh);
+  ctx.closePath(); ctx.fill();
+
+  // Left
+  ctx.fillStyle = '#00aa44';
+  ctx.beginPath();
+  ctx.moveTo(cx - bw, cy - bh);
+  ctx.lineTo(cx,      cy - bh + hh2);
+  ctx.lineTo(cx,      cy + hh2);
+  ctx.lineTo(cx - bw, cy);
+  ctx.closePath(); ctx.fill();
+
+  // Right
+  ctx.fillStyle = '#006622';
+  ctx.beginPath();
+  ctx.moveTo(cx + bw, cy - bh);
+  ctx.lineTo(cx,      cy - bh + hh2);
+  ctx.lineTo(cx,      cy + hh2);
+  ctx.lineTo(cx + bw, cy);
+  ctx.closePath(); ctx.fill();
+
+  ctx.shadowBlur = 0;
+
+  // Angry eyes on top face
+  ctx.fillStyle = '#cc0000';
+  ctx.beginPath(); ctx.arc(cx - r * 0.3, cy - bh - hh2 * 0.3, r * 0.18, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + r * 0.3, cy - bh - hh2 * 0.3, r * 0.18, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(cx - r * 0.28, cy - bh - hh2 * 0.35, r * 0.07, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + r * 0.32, cy - bh - hh2 * 0.35, r * 0.07, 0, Math.PI*2); ctx.fill();
+
+  // Mini gun sticking out from right face
+  ctx.fillStyle = '#444';
+  ctx.fillRect(cx + bw - 1, cy - bh * 0.5, r * 0.7, r * 0.15);
+
+  ctx.restore();
+}
+
+function drawIsoHoodEnemy(he) {
+  const bob = Math.sin(frameCount * 0.05 + he.col) * 1.5;
+  const iso = toIso(he.col + 0.5, he.row + 0.5);
+  const cx = iso.x, cy = iso.y - CELL * 0.3 - bob;
+  const r = CELL * 0.2;
+  const bh = r * 1.6;
+  const bw = r * 0.85;
+  const hh2 = CELL * 0.375 * 0.45;
+
+  ctx.save();
+  ctx.shadowColor = '#ff4400';
+  ctx.shadowBlur = 8;
+
+  // Shadow
+  ctx.globalAlpha = 0.3;
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.ellipse(iso.x, iso.y, r * 0.8, r * 0.25, 0, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha = 1;
+
+  // Dark hoodie body (iso box)
+  ctx.fillStyle = '#2a2a2a';
+  ctx.beginPath();
+  ctx.moveTo(cx,      cy - bh - hh2);
+  ctx.lineTo(cx + bw, cy - bh);
+  ctx.lineTo(cx,      cy - bh + hh2);
+  ctx.lineTo(cx - bw, cy - bh);
+  ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = '#1a1a1a';
+  ctx.beginPath();
+  ctx.moveTo(cx - bw, cy - bh);
+  ctx.lineTo(cx,      cy - bh + hh2);
+  ctx.lineTo(cx,      cy + hh2);
+  ctx.lineTo(cx - bw, cy);
+  ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = '#111';
+  ctx.beginPath();
+  ctx.moveTo(cx + bw, cy - bh);
+  ctx.lineTo(cx,      cy - bh + hh2);
+  ctx.lineTo(cx,      cy + hh2);
+  ctx.lineTo(cx + bw, cy);
+  ctx.closePath(); ctx.fill();
+
+  ctx.shadowBlur = 0;
+
+  // Head (small circle on top)
+  const headY = cy - bh - hh2 - r * 0.8;
+  ctx.fillStyle = '#6B4226';
+  ctx.beginPath(); ctx.arc(cx, headY, r * 0.65, 0, Math.PI*2); ctx.fill();
+
+  // White du-rag on head
+  ctx.fillStyle = 'rgba(240,240,240,0.92)';
+  ctx.beginPath();
+  ctx.arc(cx, headY, r * 0.68, Math.PI, 0, false);
+  ctx.fill();
+
+  // Red eyes
+  ctx.fillStyle = '#cc2200';
+  ctx.beginPath(); ctx.arc(cx - r * 0.22, headY, r * 0.1, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + r * 0.22, headY, r * 0.1, 0, Math.PI*2); ctx.fill();
+
+  // Gold chain
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 3;
+  ctx.beginPath();
+  ctx.arc(cx, cy - bh * 0.3, r * 0.5, Math.PI * 0.6, Math.PI * 2.4, false);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawIsoDuck() {
+  const bob = Math.sin(frameCount * 0.08) * 2.5;
+  const iso = toIso(duck.col + 0.5, duck.row + 0.5);
+  const cx = iso.x, cy = iso.y - CELL * 0.35 - bob;
+  const r = CELL * 0.26;
+
+  ctx.save();
+
+  // Invincibility blink
+  if (invincible > 0 && Math.floor(invincible / 6) % 2 === 0) ctx.globalAlpha = 0.3;
+
+  ctx.shadowColor = '#fff700';
+  ctx.shadowBlur = invincible > 0 ? 20 : 6;
+
+  // Shadow on tile
+  ctx.globalAlpha *= 0.3;
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.ellipse(iso.x, iso.y, r * 0.9, r * 0.3, 0, 0, Math.PI*2); ctx.fill();
+  ctx.globalAlpha = invincible > 0 && Math.floor(invincible / 6) % 2 === 0 ? 0.3 : 1;
+
+  // Body — fluffy white blob (iso style: slightly 3D ellipse)
+  const bodyGrad = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.2, r * 0.1, cx, cy, r);
+  bodyGrad.addColorStop(0, '#fffff0');
+  bodyGrad.addColorStop(0.6, '#fffde7');
+  bodyGrad.addColorStop(1, '#e0d8b0');
+  ctx.fillStyle = bodyGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + r * 0.1, r, r * 0.75, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Fluffy puffs around body
+  ctx.fillStyle = 'rgba(255,255,230,0.65)';
+  const puffs = [[-r*0.6,-r*0.2,r*0.28],[r*0.6,-r*0.2,r*0.28],[0,-r*0.5,r*0.32],[-r*0.35,r*0.35,r*0.22],[r*0.35,r*0.35,r*0.22]];
+  for (const [px,py,pr] of puffs) {
+    ctx.beginPath(); ctx.arc(cx+px, cy+py, pr, 0, Math.PI*2); ctx.fill();
+  }
+
+  ctx.shadowBlur = 0;
+
+  // Head
+  const headX = cx + r * 0.15;
+  const headY = cy - r * 0.65;
+  const hr = r * 0.42;
+
+  ctx.fillStyle = '#fffde7';
+  ctx.beginPath(); ctx.arc(headX, headY, hr, 0, Math.PI*2); ctx.fill();
+
+  // Eye
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.arc(headX + hr*0.4, headY - hr*0.2, hr*0.13, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(headX + hr*0.46, headY - hr*0.25, hr*0.04, 0, Math.PI*2); ctx.fill();
+
+  // Bill
+  ctx.fillStyle = '#ff8c00';
+  ctx.beginPath();
+  ctx.ellipse(headX + hr * 0.78, headY - hr * 0.1, hr * 0.3, hr * 0.13, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Do-rag (black cap)
+  ctx.fillStyle = '#111';
+  ctx.beginPath();
+  ctx.arc(headX, headY, hr * 1.05, Math.PI * 0.93, Math.PI * 2.07, false);
+  ctx.fill();
+  // Do-rag shine
+  ctx.fillStyle = 'rgba(255,255,255,0.07)';
+  ctx.beginPath();
+  ctx.arc(headX + hr*0.1, headY - hr * 0.5, hr * 0.5, Math.PI * 1.1, Math.PI * 1.7, false);
+  ctx.fill();
+  // Knot
+  ctx.fillStyle = '#1a1a1a';
+  ctx.beginPath(); ctx.ellipse(headX - hr*0.82, headY + hr*0.1, hr*0.18, hr*0.1, 0.5, 0, Math.PI*2); ctx.fill();
+  // Tail
+  const tailSway = Math.sin(frameCount * 0.05) * 2;
+  ctx.fillStyle = '#0d0d0d';
+  ctx.beginPath();
+  ctx.moveTo(headX - hr*0.6, headY + hr*0.2);
+  ctx.bezierCurveTo(headX-hr*1.2+tailSway, headY+hr*0.5, headX-hr*1.4+tailSway, headY+hr*0.9, headX-hr*1.0+tailSway, headY+hr*1.05);
+  ctx.bezierCurveTo(headX-hr*0.6, headY+hr*0.95, headX-hr*0.3, headY+hr*0.5, headX-hr*0.15, headY+hr*0.2);
+  ctx.fill();
+
+  // Legs
+  const legSwing = Math.sin(frameCount * 0.16) * r * 0.06;
+  ctx.fillStyle = '#ff8c00';
+  ctx.fillRect(cx - r*0.28 - legSwing, cy + r*0.8, r*0.15, r*0.24);
+  ctx.fillRect(cx + r*0.13 + legSwing, cy + r*0.8, r*0.15, r*0.24);
+  ctx.fillRect(cx - r*0.38 - legSwing, cy + r*1.04, r*0.32, r*0.08);
+  ctx.fillRect(cx + r*0.03 + legSwing, cy + r*1.04, r*0.32, r*0.08);
+
+  ctx.restore();
+}
+
+function drawIsoMoney(m) {
+  const bob = Math.sin(frameCount * 0.07 + m.bob) * 2.5;
+  const iso = toIso(m.col + 0.5, m.row + 0.5);
+  const cx = iso.x, cy = iso.y - CELL * 0.15 - bob;
+  const s = CELL * 0.18;
+  const hh2 = s * 0.5;
+
+  ctx.save();
+  ctx.shadowColor = '#00ff88';
+  ctx.shadowBlur = 8;
+
+  // Stack of 3 iso boxes
+  for (let i = 2; i >= 0; i--) {
+    const lift = i * s * 0.8;
+    const shade = ['#007722','#009933','#00cc44'][i];
+    const hw = s * 0.7;
+
+    ctx.fillStyle = lightenHex(shade, 0.2);
+    ctx.beginPath();
+    ctx.moveTo(cx,      cy - lift - hh2);
+    ctx.lineTo(cx + hw, cy - lift);
+    ctx.lineTo(cx,      cy - lift + hh2);
+    ctx.lineTo(cx - hw, cy - lift);
+    ctx.closePath(); ctx.fill();
+
+    ctx.fillStyle = shade;
+    ctx.beginPath();
+    ctx.moveTo(cx - hw, cy - lift);
+    ctx.lineTo(cx,      cy - lift + hh2);
+    ctx.lineTo(cx,      cy - lift + hh2 + s * 0.6);
+    ctx.lineTo(cx - hw, cy - lift + s * 0.6);
+    ctx.closePath(); ctx.fill();
+
+    ctx.fillStyle = darkenHex(shade, 0.55);
+    ctx.beginPath();
+    ctx.moveTo(cx + hw, cy - lift);
+    ctx.lineTo(cx,      cy - lift + hh2);
+    ctx.lineTo(cx,      cy - lift + hh2 + s * 0.6);
+    ctx.lineTo(cx + hw, cy - lift + s * 0.6);
+    ctx.closePath(); ctx.fill();
+  }
+
+  ctx.shadowBlur = 0;
+  // Dollar sign on top
+  ctx.fillStyle = '#fff';
+  ctx.font = `bold ${CELL * 0.18}px Courier New`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('$', cx, cy - s * 1.8);
+
+  ctx.restore();
+}
+
+function drawIsoGoalCar() {
+  const lvl = LEVELS[currentLevel - 1];
+  const carColor = lvl.goalColor;
+  const carName = lvl.goalName;
+
+  const col = Math.floor(COLS / 2);
+  const iso = toIso(col + 0.5, GOAL_ROW + 0.5);
+  const cx = iso.x, cy = iso.y - CELL * 0.5;
+  const pulse = 0.7 + 0.3 * Math.abs(Math.sin(frameCount * 0.05));
+  const cw = CELL * 0.85; // half-width
+  const ch = CELL * 0.45; // car box height
+  const hh2 = CELL * 0.375 * 0.7;
+
+  ctx.save();
+  ctx.shadowColor = carColor;
+  ctx.shadowBlur = 22 * pulse;
+
+  // Car body — iso box
+  const cTop = currentLevel === 1 ? '#f0f0f0' : (currentLevel === 2 ? '#ffe033' : '#4499ff');
+  const cMid = carColor;
+  const cDark = darkenHex(carColor === '#ffffff' ? '#aaaaaa' : carColor, 0.5);
+
+  // Top face
+  ctx.fillStyle = lightenHex(cTop, 0.15);
+  ctx.beginPath();
+  ctx.moveTo(cx,      cy - ch - hh2);
+  ctx.lineTo(cx + cw, cy - ch);
+  ctx.lineTo(cx,      cy - ch + hh2);
+  ctx.lineTo(cx - cw, cy - ch);
+  ctx.closePath(); ctx.fill();
+
+  // Windshield on top
+  ctx.fillStyle = 'rgba(150,220,255,0.45)';
+  ctx.beginPath();
+  ctx.moveTo(cx - cw*0.25, cy - ch - hh2 * 0.4);
+  ctx.lineTo(cx + cw*0.25, cy - ch - hh2 * 0.4);
+  ctx.lineTo(cx + cw*0.15, cy - ch + hh2 * 0.1);
+  ctx.lineTo(cx - cw*0.15, cy - ch + hh2 * 0.1);
+  ctx.closePath(); ctx.fill();
+
+  // Left face
+  ctx.fillStyle = cMid;
+  ctx.beginPath();
+  ctx.moveTo(cx - cw, cy - ch);
+  ctx.lineTo(cx,      cy - ch + hh2);
+  ctx.lineTo(cx,      cy + hh2);
+  ctx.lineTo(cx - cw, cy);
+  ctx.closePath(); ctx.fill();
+
+  // Right face
+  ctx.fillStyle = cDark;
+  ctx.beginPath();
+  ctx.moveTo(cx + cw, cy - ch);
+  ctx.lineTo(cx,      cy - ch + hh2);
+  ctx.lineTo(cx,      cy + hh2);
+  ctx.lineTo(cx + cw, cy);
+  ctx.closePath(); ctx.fill();
+
+  // Wheels (small dark ellipses at corners)
+  ctx.fillStyle = '#111';
+  ctx.shadowBlur = 0;
+  [[cx - cw * 0.6, cy - ch * 0.3],[cx + cw * 0.6, cy - ch * 0.3],[cx - cw * 0.5, cy + hh2 * 0.5],[cx + cw * 0.5, cy + hh2 * 0.5]].forEach(([wx, wy]) => {
+    ctx.beginPath(); ctx.ellipse(wx, wy, CELL * 0.1, CELL * 0.06, 0, 0, Math.PI*2); ctx.fill();
+  });
+
+  // Car name label above
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.font = `bold ${CELL * 0.15}px Courier New`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(carName.toUpperCase(), cx, cy - ch - hh2 - 4);
+
+  ctx.restore();
+}
+
+// =============================================
+// COLOR HELPERS
+// =============================================
+function lightenHex(hex, factor) {
+  // Factor 0-1: 1 = white
+  let r, g, b;
+  if (hex.startsWith('#')) {
+    const n = parseInt(hex.slice(1), 16);
+    r = (n >> 16) & 0xff;
+    g = (n >> 8)  & 0xff;
+    b =  n        & 0xff;
+  } else {
+    // Handle rgb(...)
+    const m = hex.match(/\d+/g);
+    [r, g, b] = m ? [+m[0], +m[1], +m[2]] : [128, 128, 128];
+  }
+  r = Math.min(255, Math.round(r + (255 - r) * factor));
+  g = Math.min(255, Math.round(g + (255 - g) * factor));
+  b = Math.min(255, Math.round(b + (255 - b) * factor));
+  return `rgb(${r},${g},${b})`;
+}
+
+function darkenHex(hex, factor) {
+  // Factor 0-1: 1 = black
+  let r, g, b;
+  if (hex.startsWith('#')) {
+    const n = parseInt(hex.slice(1), 16);
+    r = (n >> 16) & 0xff;
+    g = (n >> 8)  & 0xff;
+    b =  n        & 0xff;
+  } else {
+    const m = hex.match(/\d+/g);
+    [r, g, b] = m ? [+m[0], +m[1], +m[2]] : [128, 128, 128];
+  }
+  r = Math.max(0, Math.round(r * (1 - factor)));
+  g = Math.max(0, Math.round(g * (1 - factor)));
+  b = Math.max(0, Math.round(b * (1 - factor)));
+  return `rgb(${r},${g},${b})`;
+}
+
+// Legacy helpers (kept for compatibility — not used in iso draw)
+function lightenColor(hex, amt) { return lightenHex(hex, amt / 255); }
+function darkenColor(hex, amt)  { return darkenHex(hex, amt / 255); }
+function roundRect(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x+r,y); c.lineTo(x+w-r,y);
+  c.quadraticCurveTo(x+w,y,x+w,y+r); c.lineTo(x+w,y+h-r);
+  c.quadraticCurveTo(x+w,y+h,x+w-r,y+h); c.lineTo(x+r,y+h);
+  c.quadraticCurveTo(x,y+h,x,y+h-r); c.lineTo(x,y+r);
+  c.quadraticCurveTo(x,y,x+r,y); c.closePath();
+}
+</script>
+</body>
+</html>
